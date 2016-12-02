@@ -12,14 +12,41 @@ using Office = Microsoft.Office.Core;
 
 namespace iClickerQuizPts
 {
+    public enum WkSession : byte
+    { None = 0, First, Second, Third }
+
     public partial class ThisWorkbook
     {
+        private QuizUserControl ctrl = new QuizUserControl();
+        private List<DateTime> qDts = new List<DateTime>();
+
+        public List<DateTime> QuizDates
+        {
+            get
+            { return qDts; }
+        }
+
         private void ThisWorkbook_Startup(object sender, System.EventArgs e)
         {
+            this.ActionsPane.Controls.Add(ctrl);
         }
 
         private void ThisWorkbook_Shutdown(object sender, System.EventArgs e)
         {
+            // Comment...
+        }
+
+        private void PopulateQuizDates()
+        {
+            DateTime dt;
+            Excel.ListObject tblQuizGrades = Globals.Sheet1.ListObjects["tblClkrQuizGrades"];
+            Excel.Range hdrs = tblQuizGrades.HeaderRowRange;
+            QuizDates.Clear();
+            foreach (Excel.Range c in hdrs)
+            {
+                if (DateTime.TryParse(c.Value, out dt))
+                    QuizDates.Add(dt);
+            }
         }
 
         #region VSTO Designer generated code

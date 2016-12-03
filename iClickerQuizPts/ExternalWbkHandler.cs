@@ -16,18 +16,18 @@ using iClickerQuizPts.AppExceptions;
 
 namespace iClickerQuizPts
 {
-    public static class ExternalWbkHandler
+    public class ExternalWbkHandler
     {
         #region fields
-        readonly static byte firstDateCol; // ...to be read from App.config file
-        static Excel.Workbook wbkTestData = null;
+        private readonly byte _firstDateCol; // ...to be read from App.config file
+        private Excel.Workbook _wbkTestData = null;
         #endregion
 
         #region Ctor
-        static ExternalWbkHandler()
+        ExternalWbkHandler()
         {
             AppSettingsReader ar = new AppSettingsReader();
-            firstDateCol = (Byte)ar.GetValue("FirstDataCol",typeof(Byte));
+            _firstDateCol = (Byte)ar.GetValue("FirstDataCol",typeof(Byte));
         }
         #endregion
 
@@ -39,7 +39,7 @@ namespace iClickerQuizPts
         /// Returns name of opened XL workbook (string).  
         /// If user canceled out of FileDialog returns an empty string.
         /// </returns>
-        public static bool PromptUserToOpenQuizDataWbk()
+        public bool PromptUserToOpenQuizDataWbk()
         {
             bool userSelectedWbk = new bool();
             string testDataWbkNm = string.Empty;
@@ -57,31 +57,31 @@ namespace iClickerQuizPts
                 userSelectedWbk = true;
                 fd.Execute();
                 testDataWbkNm = Globals.ThisWorkbook.Application.ActiveWorkbook.Name;
-                wbkTestData = Globals.ThisWorkbook.Application.Workbooks[testDataWbkNm];
+                _wbkTestData = Globals.ThisWorkbook.Application.Workbooks[testDataWbkNm];
             }
             return userSelectedWbk;
         }
 
-        public static string[] GetQuizFileHeaders(out long noCols)
+        public string[] GetQuizFileHeaders(out long noCols)
         {
-            Excel.Worksheet wsData = wbkTestData.Worksheets[1];
+            Excel.Worksheet wsData = _wbkTestData.Worksheets[1];
             noCols =wsData.UsedRange.Columns.Count; // ...out param
             Excel.Range hdrs = wsData.UsedRange.Resize[1];
             string[] hdrContents = hdrs.Value2;
             return hdrContents;
         }
 
-        public static List<DateTime> GetQuizDatesFromHeaders(string[] headers, long arrSize)
+        public List<DateTime> GetQuizDatesFromHeaders(string[] headers, long arrSize)
         {
             List<DateTime> quizDates = new List<DateTime>();
-            for(int i = firstDateCol; i <= arrSize; i++)
+            for(int i = _firstDateCol; i <= arrSize; i++)
             {
                 quizDates.Add(GetDatePortionOfHeader(headers[i]));
             }
             return quizDates;
         }
 
-        public static DateTime GetDatePortionOfHeader(string hdr)
+        public DateTime GetDatePortionOfHeader(string hdr)
         {
             DateTime quizDate;
             try

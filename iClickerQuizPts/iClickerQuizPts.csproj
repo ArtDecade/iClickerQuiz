@@ -101,6 +101,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppExceptions\MissingNamedRangeException.cs" />
     <Compile Include="AppExceptions\ParsingDateFmHdrException.cs" />
     <Compile Include="ExternalWbkHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

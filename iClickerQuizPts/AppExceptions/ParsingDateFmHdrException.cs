@@ -17,4 +17,7 @@ namespace iClickerQuizPts.AppExceptions
           System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
         public string HeaderText { get; set; }
     }
+
+
+  
 }

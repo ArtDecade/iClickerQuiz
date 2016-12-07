@@ -104,6 +104,7 @@
     <Compile Include="AppExceptions\MissingNamedRangeException.cs" />
     <Compile Include="AppExceptions\ParsingDateFmHdrException.cs" />
     <Compile Include="ExternalWbkHandler.cs" />
+    <Compile Include="MsgBoxGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuizUserControl.cs">
       <SubType>UserControl</SubType>

@@ -57,7 +57,17 @@ namespace iClickerQuizPts
 
         private void ThisWorkbook_Open()
         {
-            GetWbkOnOpenInfo();
+            try
+            {
+                GetWbkOnOpenInfo();
+            }
+
+            catch (MissingNamedRangeException ex)
+            {
+                MsgBoxGenerator.SetMissingNamedRngMsg(ex.Message);
+                MsgBoxGenerator.ShowMsg(MessageBoxButtons.OK);
+                return; // ...terminate program execution
+            }
         }
 
         private void ThisWorkbook_Shutdown(object sender, System.EventArgs e)
@@ -70,7 +80,14 @@ namespace iClickerQuizPts
         /// </summary>
         public void GetWbkOnOpenInfo()
         {
-
+            try
+            {
+                SetListObjects();
+            }
+            catch(MissingNamedRangeException ex)
+            {
+                throw ex;
+            }
         }
 
         public void SetListObjects()

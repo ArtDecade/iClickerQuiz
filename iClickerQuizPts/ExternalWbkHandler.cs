@@ -24,10 +24,17 @@ namespace iClickerQuizPts
         #endregion
 
         #region Ctor
-        ExternalWbkHandler()
+        public ExternalWbkHandler()
         {
-            AppSettingsReader ar = new AppSettingsReader();
-            _firstDateCol = (Byte)ar.GetValue("FirstDataCol",typeof(Byte));
+            //AppSettingsReader ar = new AppSettingsReader();
+            //try
+            //{
+            //    _firstDateCol = (Byte)ar.GetValue("FirstDataCol", typeof(Byte));
+            //}
+            //catch(InvalidOperationException ex)
+            //{
+
+            //}
         }
         #endregion
 
@@ -81,17 +88,27 @@ namespace iClickerQuizPts
             return quizDates;
         }
 
+        /// <summary>
+        /// Extracts the date portion from the header cell of an iClicker data worksheet.
+        /// </summary>
+        /// <param name="hdr">The contents of a column header of an iClicker data worksheet.</param>
+        /// <returns>The on which an iClicker quiz was given.</returns>
+        /// <example>The text in the header cell is in a non-standard format and 
+        /// therefore the enclosed date cannot be extracted.
+        /// <para>NOTE: This exception will be thrown if this method is passed the text 
+        /// from a cell which is not a header for quiz results (i.e., if the code is 
+        /// pointing to an incorrect cell).</para></example>
         public DateTime GetDatePortionOfHeader(string hdr)
         {
             DateTime quizDate;
             try
             {
-                hdr.Remove(1, "Session".Length + 1);
-                hdr.Replace("Total ", string.Empty);
-                hdr.Trim();
+                hdr = hdr.Remove(1, "Session".Length + 1);
+                hdr = hdr.Replace("Total ", string.Empty);
+                hdr = hdr.Trim();
                 // Hdr will now be something like:  "40 5/2/16 [2.00]"...
                 int space1 = hdr.IndexOf(" ", 1);
-                int space2 = hdr.IndexOf(" ", space1 + 1);
+                int space2 = hdr.IndexOf(" ", space1 +1);
                 quizDate = DateTime.Parse(hdr.Substring(space1 + 1, space2 - space1 - 1));
                 return quizDate;
             }

@@ -98,6 +98,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppExceptions\MissingListObjectException.cs" />
     <Compile Include="AppExceptions\MissingNamedRangeException.cs" />
     <Compile Include="AppExceptions\ParsingDateFmHdrException.cs" />
     <Compile Include="ExternalWbkHandler.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="ThisWorkbook.Designer.cs">
       <DependentUpon>ThisWorkbook.Designer.xml</DependentUpon>
     </Compile>
+    <Compile Include="ThisWorkbookHandler.cs" />
     <Compile Include="UserControlsHandler.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

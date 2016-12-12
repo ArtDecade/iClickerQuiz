@@ -1,6 +1,7 @@
 ﻿using System;
 
 using iClickerQuizPts;
+using iClickerQuizPts.AppExceptions;
 using NUnit.Framework;
 
 namespace iClickerQuizPts.UnitTests

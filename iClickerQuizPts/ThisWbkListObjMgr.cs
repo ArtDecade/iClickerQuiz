@@ -106,9 +106,30 @@ namespace iClickerQuizPts
         private Excel.ListObject _tblDDs = null;
         #endregion
         #region ProtectedFlds
+        /// <summary>
+        /// Field to hold the <see langword="protected"/> instance of this class.
+        /// </summary>
         protected static ThisWbkListObjectManager _twh = null;
+        /// <summary>
+        /// Field to hold <see langword="protected"/> instance of a <see cref="iClickerQuizPts.WshListobjPairs"/> 
+        /// <see langword="struct"/>, which pairs the name of the Quiz Points 
+        /// <see cref="Excel.ListObject"/> with its parent <see cref="Excel.Worksheet"/>.
+        /// </summary>
         protected WshListobjPairs _quizPtsWshAndTbl;
+        /// <summary>
+        /// Field to hold <see langword="protected"/> instance of a <see cref="iClickerQuizPts.WshListobjPairs"/> 
+        /// <see langword="struct"/>, which pairs the name of the Double Dippers
+        /// <see cref="Excel.ListObject"/> with its parent <see cref="Excel.Worksheet"/>.
+        /// </summary>
         protected WshListobjPairs _dblDpprsWshAndTbl;
+        /// <summary>
+        /// Field to hold the <see langword="protected"/> flag indicating whether the 
+        /// <see cref="iClickerQuizPts.ThisWbkListObjectManager.TblDoubleDippers"/> and
+        /// <see cref="iClickerQuizPts.ThisWbkListObjectManager.TblQuizGrades"/> properties have
+        /// been populated.
+        /// </summary>
+        /// <remarks>This field, and its public property, are created solely to enable unit testing.
+        /// </remarks>
         protected bool _listObjsPopulated = false;
         #endregion
         #endregion

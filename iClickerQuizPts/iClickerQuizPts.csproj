@@ -128,7 +128,7 @@
     <Compile Include="ThisWorkbook.Designer.cs">
       <DependentUpon>ThisWorkbook.Designer.xml</DependentUpon>
     </Compile>
-    <Compile Include="ThisWorkbookHandler.cs" />
+    <Compile Include="ThisWbkListObjMgr.cs" />
     <Compile Include="UserControlsHandler.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

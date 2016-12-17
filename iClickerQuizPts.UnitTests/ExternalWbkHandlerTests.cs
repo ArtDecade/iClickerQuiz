@@ -9,6 +9,7 @@ namespace iClickerQuizPts.UnitTests
     [TestFixture]
     public class ExternalWbkHandlerTests
     {
+        [Category("ExternalWbkHandler")]
         [TestCase("Session 40 Total 5/2/16 [2.00]", "5/2/16")]
         [TestCase("Session 40 Total 05/02/16 [2.00]", "5/2/16")]
         [TestCase("Session 40 Total 05/02/2016 [2.00]", "5/2/16")]

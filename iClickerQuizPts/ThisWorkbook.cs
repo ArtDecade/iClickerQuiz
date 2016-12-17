@@ -16,9 +16,6 @@ using iClickerQuizPts.AppExceptions;
 /*
  * Range names...
  * Wbk scope:
- * tblDblDippers
- * tblFirstQuizDts
- * tblQuizPts
  * ptrSemester
  * ptrCourse
  * 
@@ -42,6 +39,7 @@ namespace iClickerQuizPts
         private List<DateTime> _qDts = new List<DateTime>();
         private Excel.ListObject _tblQuizGrades = null;
         private List<WshListobjPairs> _listObjsByWsh = new List<WshListobjPairs>();
+        private ThisWbkListObjectManager _lstObjMgr;
         #endregion
 
         /// <summary>
@@ -62,6 +60,16 @@ namespace iClickerQuizPts
 
         private void ThisWorkbook_Open()
         {
+            try
+            {
+                _lstObjMgr = ThisWbkListObjectManager.GetInstance();
+            }
+            catch(MissingListObjectException ex)
+            {
+                MsgBoxGenerator.SetMissingListObjMsg(ex.WshListObjPair);
+                return; // ...break out of app
+            }
+
 
             try
             {
@@ -91,46 +99,7 @@ namespace iClickerQuizPts
         /// </remarks>
         public void GetWbkOnOpenInfo()
         {
-            try
-            {
-                SetListObjects();
-            }
-            catch(MissingNamedRangeException ex)
-            {
-                throw ex;
-            }
-        }
-
-       
-
-        public void SetListObjects()
-        {
-            Excel.ListObject lo;
-
-            // First test for existence of list objects...
-
-            // Sheet1...
-            if (Globals.Sheet1.ListObjects.Count == 0)
-            {
-                throw new MissingNamedRangeException(
-                    $"{Globals.Sheet1.Name} worksheet has no defined tables.");
-            }
-
-            // Now set listobject field, throwing an exception if we cannot find 
-            // the listobject...
-            lo = null;
-            for(byte i = 1;i <= Globals.Sheet1.ListObjects.Count; i++ )
-            {
-                lo = Globals.Sheet1.ListObjects[i];
-                if(lo.Name == "tblClkrQuizGrades")
-                {
-                    _tblQuizGrades = lo;
-                    break;
-                }
-            }
-            if (_tblQuizGrades == null)
-                throw new MissingNamedRangeException(
-                    $"Cannot find the table \"tblClkrQuizGrades\" in the {Globals.Sheet1.Name} worksheet.");
+            
         }
 
         public void SetVirginWbkFlag()

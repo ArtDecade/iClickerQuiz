@@ -70,7 +70,6 @@ namespace iClickerQuizPts
         /// (which should not be used) then the value 
         /// of this property will of course remain at its default value of <c>false</c>.</para> </remarks>
         public bool PptsSet { get; }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="WshListobjPairs"/> struct.
         /// </summary>
@@ -99,26 +98,46 @@ namespace iClickerQuizPts
     /// which, for example, obviates extracting and overriding any methods we might 
     /// write within the class.) 
     /// <para>NOTE:  This class is a singleton.</para></remarks>
-    public class ThisWorkbookHandler
+    public class ThisWbkListObjectManager
     {
         #region Fields
-        private bool _virginWbk = false;
-        private QuizUserControl _ctrl = new QuizUserControl();
-        private List<DateTime> _qDts = new List<DateTime>();
+        #region PrivateFlds
         private Excel.ListObject _tblQuizGrades = null;
         private Excel.ListObject _tblDDs = null;
-        private List<WshListobjPairs> _listObjsByWsh = new List<WshListobjPairs>();
-        private ThisWorkbookHandler _twh = null;
-        private Excel.Workbook _wbk = null;
+        #endregion
+        #region ProtectedFlds
+        protected static ThisWbkListObjectManager _twh = null;
+        protected WshListobjPairs _quizPtsWshAndTbl;
+        protected WshListobjPairs _dblDpprsWshAndTbl;
+        protected bool _listObjsPopulated = false;
+        #endregion
         #endregion
 
-        private ThisWorkbookHandler()
+
+
+        /// <summary>
+        /// Creates a (<see langword="protected"/>) instance of the class.
+        /// </summary>
+        protected ThisWbkListObjectManager()
         {
-            // PopulateListOfWshListObjectPairs();
-            if(DoesTtlQuizPtsListObjectExist()==false)
+            SetWshListObjPairs();
+
+            // Trap for missing ListObjects...
+            if (DoesTtlQuizPtsListObjectExist()==false)
             {
-                throw new MissingListObjectException();
+                MissingListObjectException ex = 
+                    new MissingListObjectException { WshListObjPair = _quizPtsWshAndTbl };
+                throw ex;
             }
+
+            if (DoesDblDippersListObjectExist()==false)
+            {
+                MissingListObjectException ex = 
+                    new MissingListObjectException { WshListObjPair = _dblDpprsWshAndTbl };
+                throw ex;
+            }
+
+            SetListObjectFields();
         }
 
         #region Ppts
@@ -146,43 +165,31 @@ namespace iClickerQuizPts
             { return _tblDDs; }
         }
 
+        /// <summary>
+        /// Gets whether the ListObject properties have been populated.
+        /// </summary>
+        /// <remarks>This property is included for purposes of unit testing.</remarks>
+        public bool ListObjectsPopulated
+        {
+            get
+            { return _listObjsPopulated; }
+        }
         #endregion
-
-
 
         /// <summary>
         /// The one and only method by which one obtains an instance of this class.  
         /// </summary>
-        /// <remarks>The <see cref="ThisWorkbookHandler"/> class is a singleton.  
+        /// <remarks>The <see cref="ThisWbkListObjectManager"/> class is a singleton.  
         /// As such, its constructor has been defined as <see langword="private"/>.</remarks>
-        /// <returns>A (singleton) instance of <see cref="ThisWorkbookHandler"/>.</returns>
-        public ThisWorkbookHandler GetInstance()
+        /// <returns>A (singleton) instance of <see cref="ThisWbkListObjectManager"/>.</returns>
+        public static ThisWbkListObjectManager GetInstance()
         {
             if (_twh == null)
-                _twh = new ThisWorkbookHandler();
+                _twh = new ThisWbkListObjectManager();
             return _twh;
         }
 
-        // TODO:  Make PopulateListOfWshListObjectPairs private?
-        /// <summary>
-        /// Populates the the private <see cref="List{T}"/> containing 
-        /// <see cref="iClickerQuizPts.WshListobjPairs"/>.  
-        /// </summary>
-        /// <remarks>There should be one item in the list for each <c>Sheet</c> in 
-        /// <c>ThisWorkbook.</c>.  Further, each such <see cref="iClickerQuizPts.WshListobjPairs"/> 
-        /// should be populated with the name of a <c>Sheet</c> and the name of 
-        /// the <see cref="Excel.ListObject"/> it contains.
-        /// </remarks>
-        public void PopulateListOfWshListObjectPairs()
-        {
-            /* NOTE:  We are not trapping here to verify the existence of the 
-             * specified Sheets.  May God have mercy on the end-user who 
-             * deletes one of those sheets.*/
-            _listObjsByWsh.Add(new WshListobjPairs("tblClkrQuizGrades", Globals.Sheet1.Name));
-            _listObjsByWsh.Add(new WshListobjPairs("tblDblDippers", Globals.Sheet2.Name));
-        }
-
-       /*The following 2 methods seem like huge DRY-violation code smells.  However, there
+        /*The following 2 methods seem like huge DRY-violation code smells.  However, there
         * doesn't seem to be any way to do this more efficiently.  (Trust me - I went pretty far 
         * down some obvious roads towards that end.  I created a struct so that I could pair
         * worksheet names with ListObject names, and then created a generic List<T> of that 
@@ -196,7 +203,7 @@ namespace iClickerQuizPts
         /// <returns>
         /// <c>true</c> if the ListObject still exist; otherwise <c>false</c>.
         /// </returns>
-        public virtual bool DoesTtlQuizPtsListObjectExist()
+        protected virtual bool DoesTtlQuizPtsListObjectExist()
         {
             bool loExists = false;
             int nmbrWshTbls = Globals.Sheet1.ListObjects.Count;
@@ -207,9 +214,8 @@ namespace iClickerQuizPts
             {
                 for(int i = 1; i <= nmbrWshTbls; i++)
                 {
-                    if(Globals.Sheet1.ListObjects[i].Name == "tblClkrQuizGrades")
+                    if(Globals.Sheet1.ListObjects[i].Name == _quizPtsWshAndTbl.ListObjName)
                     {
-                        _tblQuizGrades = Globals.Sheet1.ListObjects[i];
                         loExists = true;
                         i = nmbrWshTbls; // ...break loop
                     }
@@ -225,7 +231,7 @@ namespace iClickerQuizPts
         /// <returns>
         /// <c>true</c> if the ListObject still exist; otherwise <c>false</c>.
         /// </returns>
-        public bool DoesDblDippersListObjectExist()
+        protected virtual bool DoesDblDippersListObjectExist()
         {
             bool loExists = false;
             int nmbrWshTbls = Globals.Sheet2.ListObjects.Count;
@@ -236,9 +242,8 @@ namespace iClickerQuizPts
             {
                 for (int i = 1; i <= nmbrWshTbls; i++)
                 {
-                    if(Globals.Sheet2.ListObjects[i].Name == "tblDblDippers")
+                    if(Globals.Sheet2.ListObjects[i].Name == _dblDpprsWshAndTbl.ListObjName)
                     {
-                        _tblDDs = Globals.Sheet2.ListObjects[i];
                         loExists = true;
                         i = nmbrWshTbls; // ...break loop
                     }
@@ -247,13 +252,24 @@ namespace iClickerQuizPts
             }
         }
 
-
-
-
-        public void SetListObjectsProperties()
+        /// <summary>
+        /// Sets the private fields containing the <see cref="Excel.ListObject"/> names with 
+        /// the name of their respective <see cref="Excel.Worksheet"/>.
+        /// </summary>
+        protected virtual void SetWshListObjPairs()
         {
-
+            _quizPtsWshAndTbl = new WshListobjPairs("tblClkrQuizGrades", Globals.Sheet1.Name);
+            _dblDpprsWshAndTbl = new WshListobjPairs("tblDblDippers", Globals.Sheet1.Name);
         }
 
+        /// <summary>
+        /// Sets the <see cref="Excel.ListObject"/> fields.
+        /// </summary>
+        protected virtual void SetListObjectFields()
+        {
+            _tblQuizGrades = Globals.Sheet1.ListObjects[_quizPtsWshAndTbl.ListObjName];
+            _tblDDs = Globals.Sheet2.ListObjects[_dblDpprsWshAndTbl.ListObjName];
+            _listObjsPopulated = true;
+        }
     }
 }

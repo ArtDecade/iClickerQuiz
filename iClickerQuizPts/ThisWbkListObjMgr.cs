@@ -12,17 +12,6 @@ namespace iClickerQuizPts
     /// <summary>
     /// Specifies constants defining which session/recitation within the semester week the grades are from.
     /// </summary>
-    /// <remarks>
-    /// For the purposes of this program it is assumed that the course is taught in weekly segments.  
-    /// It is further assumed that within each week there are three recitation in which a student 
-    /// can take a quiz.  This enumeration delineates those three recitation sessions.
-    /// <para>It should be noted that a student is only supposed to take each week's iClicker quiz 
-    /// once.  It has been discovered, however, that some students were attending multiple recitations 
-    /// within a week and taking a week's quiz more than once.  Further, there has been no mechanism 
-    /// - other than manual review of the data - for identifying students who take a week's iClicker 
-    /// quiz more than once.  The entire purpose of this program is to identify and filter out those 
-    /// duplicate quiz scores.</para>
-    /// </remarks>
     public enum WkSession : byte
     {
         /// <summary>No session has been selected yet.

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using iClickerQuizPts;
 using iClickerQuizPts.AppExceptions;
 using NUnit.Framework;
+using NSubstitute;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace iClickerQuizPts.UnitTests
@@ -21,7 +22,8 @@ namespace iClickerQuizPts.UnitTests
             NeverFindsQuizPtsTblFakeThisWbkListObjMgr stub;
 
             var ex = Assert.Catch<MissingListObjectException>(() => 
-                stub = (NeverFindsQuizPtsTblFakeThisWbkListObjMgr)NeverFindsQuizPtsTblFakeThisWbkListObjMgr.GetStubInstance() );
+                stub = (NeverFindsQuizPtsTblFakeThisWbkListObjMgr)
+                NeverFindsQuizPtsTblFakeThisWbkListObjMgr.GetStubInstance() );
 
             StringAssert.Contains("tblClkrQuizGrades", ex.WshListObjPair.ListObjName);
         }
@@ -33,7 +35,8 @@ namespace iClickerQuizPts.UnitTests
             NeverFindsDblDpprsTblFakeLThisWbkListObjMgr stub;
 
             var ex = Assert.Catch<MissingListObjectException>(() =>
-                stub = (NeverFindsDblDpprsTblFakeLThisWbkListObjMgr)NeverFindsDblDpprsTblFakeLThisWbkListObjMgr.GetStubInstance());
+                stub = (NeverFindsDblDpprsTblFakeLThisWbkListObjMgr)
+                NeverFindsDblDpprsTblFakeLThisWbkListObjMgr.GetStubInstance());
 
             StringAssert.Contains("tblDblDippers", ex.WshListObjPair.ListObjName);
         }
@@ -44,7 +47,8 @@ namespace iClickerQuizPts.UnitTests
         {
             AlwaysFindsListObjectsThisWbkListObjMgr stub;
 
-            stub = (AlwaysFindsListObjectsThisWbkListObjMgr)AlwaysFindsListObjectsThisWbkListObjMgr.GetStubInstance();
+            stub = (AlwaysFindsListObjectsThisWbkListObjMgr)
+                AlwaysFindsListObjectsThisWbkListObjMgr.GetStubInstance();
 
             Assert.True(stub.ListObjectsPopulated);
         }

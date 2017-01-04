@@ -64,8 +64,8 @@ namespace iClickerQuizPts.UnitTests
 
         protected override void SetWshListObjPairs()
         {
-            _quizPtsWshAndTbl = new WshListobjPairs("tblClkrQuizGrades", "Sheet1FakeName");
-            _dblDpprsWshAndTbl = new WshListobjPairs("tblDblDippers", "Sheet2FakeName");
+            _quizPtsWshAndTbl = new WshListobjPair("tblClkrQuizGrades", "Sheet1FakeName");
+            _dblDpprsWshAndTbl = new WshListobjPair("tblDblDippers", "Sheet2FakeName");
         }
         protected override bool DoesTtlQuizPtsListObjectExist()
         {
@@ -87,8 +87,8 @@ namespace iClickerQuizPts.UnitTests
 
         protected override void SetWshListObjPairs()
         {
-            _quizPtsWshAndTbl = new WshListobjPairs("tblClkrQuizGrades", "Sheet1FakeName");
-            _dblDpprsWshAndTbl = new WshListobjPairs("tblDblDippers", "Sheet2FakeName");
+            _quizPtsWshAndTbl = new WshListobjPair("tblClkrQuizGrades", "Sheet1FakeName");
+            _dblDpprsWshAndTbl = new WshListobjPair("tblDblDippers", "Sheet2FakeName");
         }
         protected override bool DoesDblDippersListObjectExist()
         {
@@ -109,8 +109,8 @@ namespace iClickerQuizPts.UnitTests
         }
         protected override void SetWshListObjPairs()
         {
-            _quizPtsWshAndTbl = new WshListobjPairs("tblClkrQuizGrades", "Sheet1FakeName");
-            _dblDpprsWshAndTbl = new WshListobjPairs("tblDblDippers", "Sheet2FakeName");
+            _quizPtsWshAndTbl = new WshListobjPair("tblClkrQuizGrades", "Sheet1FakeName");
+            _dblDpprsWshAndTbl = new WshListobjPair("tblDblDippers", "Sheet2FakeName");
         }
         protected override bool DoesTtlQuizPtsListObjectExist()
         {

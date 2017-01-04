@@ -98,10 +98,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppExceptions\InvalidWshListObjPairException.cs" />
     <Compile Include="AppExceptions\MissingListObjectException.cs" />
     <Compile Include="AppExceptions\MissingNamedRangeException.cs" />
+    <Compile Include="AppExceptions\MissingWshException.cs" />
     <Compile Include="AppExceptions\ParsingDateFmHdrException.cs" />
     <Compile Include="ExternalWbkHandler.cs" />
+    <Compile Include="IListObjHandling.cs" />
+    <Compile Include="ListObjectManager.cs" />
     <Compile Include="MsgBoxGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuizUserControl.cs">

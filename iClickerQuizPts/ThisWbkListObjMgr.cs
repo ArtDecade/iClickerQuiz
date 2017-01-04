@@ -10,76 +10,6 @@ using Excel = Microsoft.Office.Interop.Excel;
 namespace iClickerQuizPts
 {
     /// <summary>
-    /// Specifies constants defining which session/recitation within the semester week the grades are from.
-    /// </summary>
-    public enum WkSession : byte
-    {
-        /// <summary>No session has been selected yet.
-        /// </summary>
-        None = 0,
-        /// <summary>
-        /// First recitation of a given week.
-        /// </summary>
-        First,
-        /// <summary>Second recitation of a given week.
-        /// </summary>
-        Second,
-        /// <summary>
-        /// Third recitation of a given week.
-        /// </summary>
-        Third
-    }
-
-    /// <summary>
-    /// Provides a mechanism for pairing the name of each Excel <see cref="Excel.ListObject"/> 
-    /// (i.e., Table) with its parent <see cref="Excel.Worksheet"/>. </summary>
-    /// <remarks>Each of the three worksheets in this workbook contains a named 
-    /// <see cref="Excel.ListObject"/>.  The <see cref="ThisWorkbook.SetListObjects"/> method 
-    /// utilizes the information stored in instances of this struct in order to verify that 
-    /// the basic structure of this <see cref="Excel.Workbook"/> has not been altered.</remarks>
-    public struct WshListobjPairs
-    {
-        /// <summary>
-        /// Gets the name of the Excel <see cref="Excel.ListObject"/> (i.e., Table) within 
-        /// one of <c>ThisWorkbook's</c> Sheet.
-        /// </summary>
-        public string ListObjName { get; }
-        /// <summary>
-        /// Gets the name of the <c>Sheet</c> holding the identified <see cref="Excel.ListObject"/>
-        /// </summary>
-        public string WshNm { get; set; }
-        /// <summary>
-        /// Gets a value indicating whether both <see cref="WshListobjPairs.ListObjName"/> and
-        /// <see cref="WshListobjPairs.WshNm"/> properties have been populated.
-        /// </summary>
-        /// <remarks>This value is set in the <see cref="WshListobjPairs"/> custom constructor.  
-        /// It is only set to <c>true</c> if non-empty, non-null values are provided for both 
-        /// <see cref="WshListobjPairs.ListObjName"/> and <see cref="WshListobjPairs.WshNm"/>.
-        /// <para>If the structure is instantiated via its default constructor 
-        /// (which should not be used) then the value 
-        /// of this property will of course remain at its default value of <c>false</c>.</para> </remarks>
-        public bool PptsSet { get; }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WshListobjPairs"/> struct.
-        /// </summary>
-        /// <param name="listObjNm">The name of the <see cref="Excel.ListObject"/> which the
-        /// paired <see cref="Excel.Worksheet"/> contains.</param>
-        /// <param name="wshNm">A worksheet within this workbook.</param>
-        /// <remarks>Each worksheet in this workbook contains contains (or should contain) one
-        /// and only one named <see cref="Excel.ListObject"/>.</remarks>
-        public WshListobjPairs(string listObjNm, string wshNm) : this()
-        {
-            // Set structure properties...
-            ListObjName = listObjNm;
-            WshNm = wshNm;
-            if (!string.IsNullOrEmpty(listObjNm) && !string.IsNullOrEmpty(wshNm))
-                PptsSet = true;
-            else
-                PptsSet = false; // ...just to be certain
-        }
-    }
-
-    /// <summary>
     /// Provides a number of properties of <c>ThisWorkbook</c> 
     /// </summary>
     /// <remarks>The properties are places here, rather than on the <c>ThisWorkbook</c> class
@@ -96,8 +26,8 @@ namespace iClickerQuizPts
         #endregion
         #region ProtectedFlds
         protected static ThisWbkListObjectManager _twh = null;
-        protected WshListobjPairs _quizPtsWshAndTbl;
-        protected WshListobjPairs _dblDpprsWshAndTbl;
+        protected WshListobjPair _quizPtsWshAndTbl;
+        protected WshListobjPair _dblDpprsWshAndTbl;
         protected bool _listObjsPopulated = false;
         #endregion
         #endregion
@@ -247,8 +177,8 @@ namespace iClickerQuizPts
         /// </summary>
         protected virtual void SetWshListObjPairs()
         {
-            _quizPtsWshAndTbl = new WshListobjPairs("tblClkrQuizGrades", Globals.Sheet1.Name);
-            _dblDpprsWshAndTbl = new WshListobjPairs("tblDblDippers", Globals.Sheet1.Name);
+            _quizPtsWshAndTbl = new WshListobjPair("tblClkrQuizGrades", Globals.Sheet1.Name);
+            _dblDpprsWshAndTbl = new WshListobjPair("tblDblDippers", Globals.Sheet1.Name);
         }
 
         /// <summary>

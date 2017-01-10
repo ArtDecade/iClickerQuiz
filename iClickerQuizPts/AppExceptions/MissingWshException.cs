@@ -15,7 +15,7 @@ namespace iClickerQuizPts.AppExceptions
     /// <remarks>
     /// This application will throw this exception if the user has deleted (or renamed) any
     /// of the original worksheets.
-    /// <remarks>
+    /// </remarks>
     [Serializable]
     public class MissingWorksheetException : ApplicationException
     {

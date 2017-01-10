@@ -11,6 +11,7 @@ using Excel = Microsoft.Office.Interop.Excel;
 using Office = Microsoft.Office.Core;
 
 using iClickerQuizPts.AppExceptions;
+using iClickerQuizPts.ListObjMgmt;
 
 
 /*
@@ -55,7 +56,7 @@ namespace iClickerQuizPts
     /// Provides a mechanism for pairing the name of each Excel <see cref="Excel.ListObject"/> 
     /// (i.e., Table) with its parent <see cref="Excel.Worksheet"/>. </summary>
     /// <remarks>Each of the three worksheets in this workbook contains a named 
-    /// <see cref="Excel.ListObject"/>.  The <see cref="ThisWorkbook.SetListObjects"/> method 
+    /// <see cref="Excel.ListObject"/>.  The <see cref="ThisWorkbook.InstantiateListObjWrapperClasses"/> method 
     /// utilizes the information stored in instances of this struct in order to verify that 
     /// the basic structure of this <see cref="Excel.Workbook"/> has not been altered.</remarks>
     public struct WshListobjPair
@@ -108,9 +109,13 @@ namespace iClickerQuizPts
         private List<DateTime> _qDts = new List<DateTime>();
         private Excel.ListObject _tblQuizGrades = null;
         private List<WshListobjPair> _listObjsByWsh = new List<WshListobjPair>();
-        private ThisWbkListObjectManager _lstObjMgr;
+
+        private QuizDataListObjMgr _qdLOMgr;
+        private DblDippersListObjMgr _ddsLOMgr;
+        
         #endregion
 
+        #region Ppts
         /// <summary>
         /// Gets a generic <c>List</c> (of type <see cref="DateTime"/>) containing the dates 
         /// of all iClicker quizzes that have been loaded into this workbook.
@@ -121,6 +126,18 @@ namespace iClickerQuizPts
             { return _qDts; }
         }
 
+        /// <summary>
+        /// Gets a <see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager"/>-derived class 
+        /// which handles all interaction with the <see cref="Excel.ListObject"/> containing 
+        /// all iClicker quiz grades.
+        /// </summary>
+        public QuizDataListObjMgr QuizDataXLTblMgr
+        {
+            get
+            { return _qdLOMgr; }
+        }
+
+        #endregion
         private void ThisWorkbook_Startup(object sender, System.EventArgs e)
         {
             this.ActionsPane.Controls.Add(_ctrl);
@@ -131,11 +148,24 @@ namespace iClickerQuizPts
         {
             try
             {
-                _lstObjMgr = ThisWbkListObjectManager.GetInstance();
+                InstantiateListObjWrapperClasses();
             }
-            catch(MissingListObjectException ex)
+            catch (InvalidWshListObjPairException ex)
+            {
+                MsgBoxGenerator.SetInvalidWshListObjPairMsg(ex.WshListObjPair);
+                MsgBoxGenerator.ShowMsg(MessageBoxButtons.OK);
+                return; // ...break out of app
+            }
+            catch (MissingWorksheetException ex)
+            {
+                MsgBoxGenerator.SetMissingWshMsg(ex.WshListObjPair);
+                MsgBoxGenerator.ShowMsg(MessageBoxButtons.OK);
+                return; // ...break out of app
+            }
+            catch (MissingListObjectException ex)
             {
                 MsgBoxGenerator.SetMissingListObjMsg(ex.WshListObjPair);
+                MsgBoxGenerator.ShowMsg(MessageBoxButtons.OK);
                 return; // ...break out of app
             }
 
@@ -171,11 +201,6 @@ namespace iClickerQuizPts
             
         }
 
-        public void SetVirginWbkFlag()
-        {
-
-        }
-
         private void PopulateQuizDates()
         {
             DateTime dt;
@@ -186,6 +211,38 @@ namespace iClickerQuizPts
             {
                 if (DateTime.TryParse(c.Value, out dt))
                     QuizDates.Add(dt);
+            }
+        }
+
+        /// <summary>
+        /// Instantiates instances of the <see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager"/>-derived 
+        /// classes that will be used in this application.
+        /// </summary>
+        private void InstantiateListObjWrapperClasses()
+        {
+            // Define the wsh-ListObj pairs...
+            WshListobjPair quizDataLOInfo =
+                new WshListobjPair("tblClkrQuizGrades", Globals.Sheet1.Name);
+            WshListobjPair dblDpprsLOInfo =
+                new WshListobjPair("tblDblDippers", Globals.Sheet2.Name);
+
+            // Instantiate the classes...
+            try
+            {
+                _qdLOMgr = new QuizDataListObjMgr(quizDataLOInfo);
+            }
+            catch(ApplicationException ex)
+            {
+                throw ex;
+            }
+
+            try
+            {
+                _ddsLOMgr = new DblDippersListObjMgr(dblDpprsLOInfo);
+            }
+            catch(ApplicationException ex)
+            {
+                throw ex;
             }
         }
 

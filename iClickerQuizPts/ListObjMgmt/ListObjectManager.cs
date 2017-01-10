@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Excel = Microsoft.Office.Interop.Excel;
 using iClickerQuizPts.AppExceptions;
 
-namespace iClickerQuizPts
+namespace iClickerQuizPts.ListObjMgmt
 {
     /// <summary>
     /// Provides a mechanism for interacting with the workbook's <see cref="Excel.ListObjects"/>.
@@ -21,18 +21,36 @@ namespace iClickerQuizPts
         private WshListobjPair _wshLoPr;
         #endregion
         #region ProtectedFlds
+        /// <summary>
+        /// Holds a value indicating whether the underlying <see cref="Excel.ListObject"/> 
+        /// contains data.
+        /// </summary>
         protected bool _listObjHasData = false;
         #endregion
         #endregion
 
+        /// <summary>
+        /// Gets a value indicating whether the underlying 
+        /// <see cref="Excel.ListObject"/> has yet been populated 
+        /// with any data.
+        /// </summary>
         public virtual bool ListObjectHasData
         {
             get
             { return _listObjHasData; }
         }
 
+        /// <summary>
+        /// Initializes a new instance of the 
+        /// class <see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager"/>.
+        /// </summary>
+        /// <param name="wshTblNmzPair">The properties of this <see langword="struct"/> 
+        /// should be populated with the name of the <see cref="Excel.ListObject"/> 
+        /// and the name of the parent <see cref="Excel.Worksheet"/>.</param>
         protected ListObjectManager(WshListobjPair wshTblNmzPair)
         {
+            // Trap to ensure that constructor parameter has been populated with both
+            // a wsh name and a ListObject name...
             if(wshTblNmzPair.PptsSet)
                 _wshLoPr = wshTblNmzPair;
             else
@@ -42,7 +60,8 @@ namespace iClickerQuizPts
                 throw ex;
             }
 
-
+            // Trap to ensure that the worksheet in which the ListObject resides
+            // has not been deleted or renamed by the user...
             if (!DoesParentWshExist())
             {
                 MissingWorksheetException ex = new MissingWorksheetException();
@@ -52,6 +71,8 @@ namespace iClickerQuizPts
             else
                 _ws = Globals.ThisWorkbook.Worksheets[_wshLoPr.WshNm];
 
+            // Trap to ensure that the ListObject we need has not been deleted
+            // or renamed by the user...
             if (!DoesListObjExist())
             {
                 MissingListObjectException ex = new MissingListObjectException();
@@ -61,9 +82,17 @@ namespace iClickerQuizPts
             else
                 _lo = _ws.ListObjects[_wshLoPr.ListObjName];
 
+            // If here then the ListObject (and its parent wsh) exist.  Now see if 
+            // the table has yet been populated with any data...
             _listObjHasData = DoesListObjHaveData();
         }
 
+        /// <summary>
+        /// Determines whether the parent <see cref="Excel.Worksheet"/> of 
+        /// the <see cref="Excel.ListObject"/> exists.
+        /// </summary>
+        /// <returns><c>true</c> if the <see cref="Excel.Worksheet"/> exists; 
+        /// otherwise <c>false</c>.</returns>
         protected virtual bool DoesParentWshExist()
         {
             bool exists = false;
@@ -80,6 +109,11 @@ namespace iClickerQuizPts
             return exists;
         }
 
+        /// <summary>
+        /// Determines whether the the <see cref="Excel.ListObject"/> exists.
+        /// </summary>
+        /// <returns><c>true</c> if the <see cref="Excel.ListObject"/> exists; 
+        /// otherwise <c>false</c>.</returns>
         protected virtual bool DoesListObjExist()
         {
             bool exists = false;
@@ -103,9 +137,15 @@ namespace iClickerQuizPts
             }
         }
 
+        /// <summary>
+        /// Determines whether the the <see cref="Excel.ListObject"/> has yet 
+        /// been populated with any data.
+        /// </summary>
+        /// <returns><c>true</c> if the <see cref="Excel.ListObject"/> 
+        /// contains data; otherwise <c>false</c>.</returns>
         protected virtual bool DoesListObjHaveData()
         {
-            bool hasData = false;
+            bool hasData = false; // ...default
 
             // Now see if there are data...
             if (_lo.ListRows.Count > 1)
@@ -126,7 +166,5 @@ namespace iClickerQuizPts
             return hasData; 
         }
 
-
-        
     }
 }

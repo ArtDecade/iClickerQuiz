@@ -105,7 +105,9 @@
     <Compile Include="AppExceptions\ParsingDateFmHdrException.cs" />
     <Compile Include="ExternalWbkHandler.cs" />
     <Compile Include="IListObjHandling.cs" />
-    <Compile Include="ListObjectManager.cs" />
+    <Compile Include="ListObjMgmt\DblDippersListObjMgr.cs" />
+    <Compile Include="ListObjMgmt\ListObjectManager.cs" />
+    <Compile Include="ListObjMgmt\QuizDataListObjMgr.cs" />
     <Compile Include="MsgBoxGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuizUserControl.cs">

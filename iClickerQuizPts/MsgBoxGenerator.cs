@@ -54,7 +54,7 @@ namespace iClickerQuizPts
         /// a <see cref="iClickerQuizPts.AppExceptions.MissingListObjectException"/> is thrown.
         /// </summary>
         /// <param name="pr">The <see langword="struc"/> which contains the name of the missisng list object and the name of the parent worksheet.</param>
-        public static void SetMissingListObjMsg(WshListobjPairs pr)
+        public static void SetMissingListObjMsg(WshListobjPair pr)
         {
             _caption = "This Workbook Has Been Altered";
 

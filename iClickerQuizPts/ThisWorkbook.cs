@@ -30,6 +30,75 @@ using iClickerQuizPts.AppExceptions;
  
 namespace iClickerQuizPts
 {
+    /// <summary>
+    /// Specifies constants defining which session/recitation within the semester week the grades are from.
+    /// </summary>
+    public enum WkSession : byte
+    {
+        /// <summary>No session has been selected yet.
+        /// </summary>
+        None = 0,
+        /// <summary>
+        /// First recitation of a given week.
+        /// </summary>
+        First,
+        /// <summary>Second recitation of a given week.
+        /// </summary>
+        Second,
+        /// <summary>
+        /// Third recitation of a given week.
+        /// </summary>
+        Third
+    }
+
+    /// <summary>
+    /// Provides a mechanism for pairing the name of each Excel <see cref="Excel.ListObject"/> 
+    /// (i.e., Table) with its parent <see cref="Excel.Worksheet"/>. </summary>
+    /// <remarks>Each of the three worksheets in this workbook contains a named 
+    /// <see cref="Excel.ListObject"/>.  The <see cref="ThisWorkbook.SetListObjects"/> method 
+    /// utilizes the information stored in instances of this struct in order to verify that 
+    /// the basic structure of this <see cref="Excel.Workbook"/> has not been altered.</remarks>
+    public struct WshListobjPair
+    {
+        /// <summary>
+        /// Gets the name of the Excel <see cref="Excel.ListObject"/> (i.e., Table) within 
+        /// one of <c>ThisWorkbook's</c> Sheet.
+        /// </summary>
+        public string ListObjName { get; }
+        /// <summary>
+        /// Gets the name of the <c>Sheet</c> holding the identified <see cref="Excel.ListObject"/>
+        /// </summary>
+        public string WshNm { get; set; }
+        /// <summary>
+        /// Gets a value indicating whether both <see cref="WshListobjPair.ListObjName"/> and
+        /// <see cref="WshListobjPair.WshNm"/> properties have been populated.
+        /// </summary>
+        /// <remarks>This value is set in the <see cref="WshListobjPair"/> custom constructor.  
+        /// It is only set to <c>true</c> if non-empty, non-null values are provided for both 
+        /// <see cref="WshListobjPair.ListObjName"/> and <see cref="WshListobjPair.WshNm"/>.
+        /// <para>If the structure is instantiated via its default constructor 
+        /// (which should not be used) then the value 
+        /// of this property will of course remain at its default value of <c>false</c>.</para> </remarks>
+        public bool PptsSet { get; }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WshListobjPair"/> struct.
+        /// </summary>
+        /// <param name="listObjNm">The name of the <see cref="Excel.ListObject"/> which the
+        /// paired <see cref="Excel.Worksheet"/> contains.</param>
+        /// <param name="wshNm">A worksheet within this workbook.</param>
+        /// <remarks>Each worksheet in this workbook contains contains (or should contain) one
+        /// and only one named <see cref="Excel.ListObject"/>.</remarks>
+        public WshListobjPair(string listObjNm, string wshNm) : this()
+        {
+            // Set structure properties...
+            ListObjName = listObjNm;
+            WshNm = wshNm;
+            if (!string.IsNullOrEmpty(listObjNm) && !string.IsNullOrEmpty(wshNm))
+                PptsSet = true;
+            else
+                PptsSet = false; // ...just to be certain
+        }
+    }
 
     public partial class ThisWorkbook
     {
@@ -38,7 +107,7 @@ namespace iClickerQuizPts
         private QuizUserControl _ctrl = new QuizUserControl();
         private List<DateTime> _qDts = new List<DateTime>();
         private Excel.ListObject _tblQuizGrades = null;
-        private List<WshListobjPairs> _listObjsByWsh = new List<WshListobjPairs>();
+        private List<WshListobjPair> _listObjsByWsh = new List<WshListobjPair>();
         private ThisWbkListObjectManager _lstObjMgr;
         #endregion
 

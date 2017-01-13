@@ -29,6 +29,7 @@ namespace iClickerQuizPts.ListObjMgmt
         #endregion
         #endregion
 
+        #region ppts
         /// <summary>
         /// Gets a value indicating whether the underlying 
         /// <see cref="Excel.ListObject"/> has yet been populated 
@@ -39,7 +40,9 @@ namespace iClickerQuizPts.ListObjMgmt
             get
             { return _listObjHasData; }
         }
+        #endregion
 
+        #region ctor
         /// <summary>
         /// Initializes a new instance of the 
         /// class <see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager"/>.
@@ -51,7 +54,7 @@ namespace iClickerQuizPts.ListObjMgmt
         {
             // Trap to ensure that constructor parameter has been populated with both
             // a wsh name and a ListObject name...
-            if(wshTblNmzPair.PptsSet)
+            if (wshTblNmzPair.PptsSet)
                 _wshLoPr = wshTblNmzPair;
             else
             {
@@ -86,14 +89,16 @@ namespace iClickerQuizPts.ListObjMgmt
             // the table has yet been populated with any data...
             _listObjHasData = DoesListObjHaveData();
         }
+        #endregion
 
+        #region methods
         /// <summary>
         /// Determines whether the parent <see cref="Excel.Worksheet"/> of 
         /// the <see cref="Excel.ListObject"/> exists.
         /// </summary>
         /// <returns><c>true</c> if the <see cref="Excel.Worksheet"/> exists; 
         /// otherwise <c>false</c>.</returns>
-        protected virtual bool DoesParentWshExist()
+        public virtual bool DoesParentWshExist()
         {
             bool exists = false;
             int noWshs = Globals.ThisWorkbook.Worksheets.Count;
@@ -114,7 +119,7 @@ namespace iClickerQuizPts.ListObjMgmt
         /// </summary>
         /// <returns><c>true</c> if the <see cref="Excel.ListObject"/> exists; 
         /// otherwise <c>false</c>.</returns>
-        protected virtual bool DoesListObjExist()
+        public virtual bool DoesListObjExist()
         {
             bool exists = false;
             int tbls = _ws.ListObjects.Count;
@@ -165,6 +170,6 @@ namespace iClickerQuizPts.ListObjMgmt
             }
             return hasData; 
         }
-
+        #endregion
     }
 }

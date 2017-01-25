@@ -63,6 +63,7 @@ namespace iClickerQuizPts.UnitTests
         {
             WshListobjPair pr = new WshListobjPair(tblNm, wshNm);
             var mgr = Substitute.ForPartsOf<GenericListObjMgr>(pr);
+
             mgr.When(x => x.DoesParentWshExist()).DoNotCallBase();
             mgr.DoesParentWshExist().Returns(false);
 
@@ -75,12 +76,28 @@ namespace iClickerQuizPts.UnitTests
         {
             WshListobjPair pr = new WshListobjPair(tblNm, wshNm);
             var mgr = Substitute.ForPartsOf<GenericListObjMgr>(pr);
+
             mgr.When(x =>
             {
                 x.DoesParentWshExist().Returns(true);
                 x.DoesListObjExist().Returns(false);
                 var ex = Assert.Catch<MissingListObjectException>(() =>
                     x.SetListObjAndParentWshPpts());
+            });
+        }
+
+        [TestCase("foo", "bar")]
+        public void SetListObjAndParentWshPpt_GoodCtrParam_SetsVerifiedFlagTrue(string wshNm, string tblNm)
+        {
+            WshListobjPair pr = new WshListobjPair(tblNm, wshNm);
+            var mgr = Substitute.ForPartsOf<GenericListObjMgr>(pr);
+
+            mgr.When(x =>
+            {
+                x.DoesParentWshExist().Returns(true);
+                x.DoesListObjExist().Returns(false);
+                x.SetListObjAndParentWshPpts();
+                Assert.True(x.UnderlyingWshAndListObjVerified);
             });
         }
     }

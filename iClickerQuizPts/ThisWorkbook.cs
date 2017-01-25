@@ -172,7 +172,7 @@ namespace iClickerQuizPts
 
             try
             {
-                GetWbkOnOpenInfo();
+                SetWbkScopedNamedRanges();
             }
 
             catch (MissingNamedRangeException ex)
@@ -188,17 +188,42 @@ namespace iClickerQuizPts
             // Comment...
         }
 
-        /// <summary>
-        /// Populates a number of properties reflecting the on-open state of this workbook.
-        /// </summary>
-        /// <remarks>
-        /// This method calls a number of other methods, all of which populate various properties 
-        /// pertaining to <list type="bullet">
-        /// </list>
-        /// </remarks>
-        public void GetWbkOnOpenInfo()
+        private void SetWbkScopedNamedRanges()
         {
-            
+            string[] iClickerRngNmz = { "ptrSemester", "ptrCourse" };
+            int nmbrWbkNmz = Globals.ThisWorkbook.Names.Count;
+
+            for (int i =0; i < iClickerRngNmz.Length; i++)
+            {
+                bool foundiClickerRng = false;
+                string iClkrNm = iClickerRngNmz[i];
+                for(int j = 1; j <= nmbrWbkNmz; j++)
+                {
+                    Excel.Name nmdRng = Globals.ThisWorkbook.Names.Item(j);
+                    if(iClkrNm == nmdRng.Name)
+                    {
+                        foundiClickerRng = true;
+                        try
+                        {
+                            Excel.Range r = nmdRng.RefersToRange;
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+
+                }
+
+                if(!foundiClickerRng)
+                {
+                    MissingNamedRangeException ex = new MissingNamedRangeException();
+                    throw ex;
+                    break;
+                }
+
+            }
+
         }
 
         private void PopulateQuizDates()

@@ -104,7 +104,6 @@
     <Compile Include="AppExceptions\MissingWshException.cs" />
     <Compile Include="AppExceptions\ParsingDateFmHdrException.cs" />
     <Compile Include="ExternalWbkHandler.cs" />
-    <Compile Include="IListObjHandling.cs" />
     <Compile Include="ListObjMgmt\DblDippersListObjMgr.cs" />
     <Compile Include="ListObjMgmt\ListObjectManager.cs" />
     <Compile Include="ListObjMgmt\QuizDataListObjMgr.cs" />
@@ -134,7 +133,6 @@
     <Compile Include="ThisWorkbook.Designer.cs">
       <DependentUpon>ThisWorkbook.Designer.xml</DependentUpon>
     </Compile>
-    <Compile Include="ThisWbkListObjMgr.cs" />
     <Compile Include="UserControlsHandler.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

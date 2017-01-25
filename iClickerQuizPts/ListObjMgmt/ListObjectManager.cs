@@ -131,7 +131,8 @@ namespace iClickerQuizPts.ListObjMgmt
             else
                 _lo = _ws.ListObjects[_wshLoPr.ListObjName];
 
-            // Now see if the table has yet been populated with any data...
+            // Set fields...
+            _wshAndListObjIntegrityVerified = true;
             _listObjHasData = DoesListObjHaveData();
         }
 

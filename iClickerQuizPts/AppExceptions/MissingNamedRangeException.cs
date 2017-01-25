@@ -20,6 +20,9 @@ namespace iClickerQuizPts.AppExceptions
     [Serializable]
     public class MissingNamedRangeException : ApplicationException
     {
+
+
+
         /// <summary>
         /// Initializes a new instance of the exception.
         /// </summary>

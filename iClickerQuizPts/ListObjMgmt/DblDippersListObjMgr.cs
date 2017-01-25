@@ -13,7 +13,7 @@ namespace iClickerQuizPts.ListObjMgmt
     /// of Double-Dippers (i.e., students who have taken multiple quizzes for a given
     /// course week.
     /// </summary>
-    class DblDippersListObjMgr : ListObjectManager
+    public class DblDippersListObjMgr : ListObjectManager
     {
         /// <summary>
         /// Initializes a new instance of the 

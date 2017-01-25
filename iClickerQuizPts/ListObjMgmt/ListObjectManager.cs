@@ -22,6 +22,12 @@ namespace iClickerQuizPts.ListObjMgmt
         #endregion
         #region ProtectedFlds
         /// <summary>
+        /// Holds a value indicating whether the existence and names of the underlying
+        /// <see cref="Excel.Worksheet"/> and <see cref="Excel.ListObject"/> have been
+        /// verified.
+        /// </summary>
+        protected bool _wshAndListObjIntegrityVerified = false;
+        /// <summary>
         /// Holds a value indicating whether the underlying <see cref="Excel.ListObject"/> 
         /// contains data.
         /// </summary>
@@ -40,6 +46,26 @@ namespace iClickerQuizPts.ListObjMgmt
             get
             { return _listObjHasData; }
         }
+
+        /// <summary>
+        /// Gets a value indicating whether the existence and names of the underlying
+        /// <see cref="Excel.Worksheet"/> and <see cref="Excel.ListObject"/> have been
+        /// verified.
+        /// </summary>
+        /// <remarks>
+        /// Adding this property gives us a mechanism for ensuring that the 
+        /// <see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager.SetListObjAndParentWshPpts"/> 
+        /// method has been called prior to any other class method being called.  (Again, the 
+        /// requirements of unit testing prevent us from calling the 
+        /// <see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager.SetListObjAndParentWshPpts"/> 
+        /// method from within the <see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager"/> 
+        /// constructor.
+        /// </remarks>
+        public virtual bool UnderlyingWshAndListObjVerified
+        {
+            get
+            { return _wshAndListObjIntegrityVerified; }
+        }
         #endregion
 
         #region ctor
@@ -50,6 +76,11 @@ namespace iClickerQuizPts.ListObjMgmt
         /// <param name="wshTblNmzPair">The properties of this <see langword="struct"/> 
         /// should be populated with the name of the <see cref="Excel.ListObject"/> 
         /// and the name of the parent <see cref="Excel.Worksheet"/>.</param>
+        /// <exception cref="iClickerQuizPts.AppExceptions.InvalidWshListObjPairException"> thrown
+        /// whenever the <see cref="iClickerQuizPts.WshListobjPair.WshNm"/> property 
+        /// or the the <see cref="iClickerQuizPts.WshListobjPair.ListObjName"/> property 
+        /// has not been populated.  (In other words, <i>both</i> properties must contain non-empty, 
+        /// non-null values.)</exception>
         protected ListObjectManager(WshListobjPair wshTblNmzPair)
         {
             // Trap to ensure that constructor parameter has been populated with both
@@ -62,9 +93,26 @@ namespace iClickerQuizPts.ListObjMgmt
                 ex.WshListObjPair = wshTblNmzPair;
                 throw ex;
             }
+        }
+        #endregion
 
-            // Trap to ensure that the worksheet in which the ListObject resides
-            // has not been deleted or renamed by the user...
+        #region methods
+
+        /// <summary>
+        /// Sets <list type="bullet">
+        /// <item>Parent <see cref="Excel.Worksheet"/> of <see cref="Excel.ListObject"/></item>
+        /// <item><see cref="Excel.ListObject"/> itself</item>
+        /// <item><see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager.DoesListObjHaveData"/> property</item>
+        /// </list>
+        /// </summary>
+        /// <exception cref="iClickerQuizPts.AppExceptions.MissingWorksheetException"> thrown when the 
+        /// parent <see cref="Excel.Worksheet"/> has either been renamed or deleted.</exception>
+        /// <exception cref="iClickerQuizPts.AppExceptions.MissingListObjectException"> thrown when
+        /// the <see cref="Excel.ListObject"/> has either been renamed or deleted.</exception>
+        /// <remarks>It would be more efficient to call this method from within the class 
+        /// constructor.  However, doing some complicates unit testing.</remarks>
+        public void SetListObjAndParentWshPpts()
+        {
             if (!DoesParentWshExist())
             {
                 MissingWorksheetException ex = new MissingWorksheetException();
@@ -74,8 +122,6 @@ namespace iClickerQuizPts.ListObjMgmt
             else
                 _ws = Globals.ThisWorkbook.Worksheets[_wshLoPr.WshNm];
 
-            // Trap to ensure that the ListObject we need has not been deleted
-            // or renamed by the user...
             if (!DoesListObjExist())
             {
                 MissingListObjectException ex = new MissingListObjectException();
@@ -85,13 +131,10 @@ namespace iClickerQuizPts.ListObjMgmt
             else
                 _lo = _ws.ListObjects[_wshLoPr.ListObjName];
 
-            // If here then the ListObject (and its parent wsh) exist.  Now see if 
-            // the table has yet been populated with any data...
+            // Now see if the table has yet been populated with any data...
             _listObjHasData = DoesListObjHaveData();
         }
-        #endregion
 
-        #region methods
         /// <summary>
         /// Determines whether the parent <see cref="Excel.Worksheet"/> of 
         /// the <see cref="Excel.ListObject"/> exists.

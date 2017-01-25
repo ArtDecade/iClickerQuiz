@@ -226,7 +226,7 @@ namespace iClickerQuizPts
             WshListobjPair dblDpprsLOInfo =
                 new WshListobjPair("tblDblDippers", Globals.Sheet2.Name);
 
-            // Instantiate the classes...
+            // Instantiate quiz qata class...
             try
             {
                 _qdLOMgr = new QuizDataListObjMgr(quizDataLOInfo);
@@ -235,10 +235,27 @@ namespace iClickerQuizPts
             {
                 throw ex;
             }
+            try
+            {
+                _qdLOMgr.SetListObjAndParentWshPpts();
+            }
+            catch(ApplicationException ex)
+            {
+                throw ex;
+            }
 
+            // Instantiate double dippers class...
             try
             {
                 _ddsLOMgr = new DblDippersListObjMgr(dblDpprsLOInfo);
+            }
+            catch(ApplicationException ex)
+            {
+                throw ex;
+            }
+            try
+            {
+                _ddsLOMgr.SetListObjAndParentWshPpts();
             }
             catch(ApplicationException ex)
             {

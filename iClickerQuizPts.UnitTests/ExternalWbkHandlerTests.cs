@@ -1,18 +1,23 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+using iClickerQuizPts;
+using iClickerQuizPts.AppExceptions;
+using NUnit.Framework;
 
 namespace iClickerQuizPts.UnitTests
 {
-    [TestClass]
+    [TestFixture]
     public class ExternalWbkHandlerTests
     {
-        [TestMethod]
-        public void GetDatePortionOfHeader_ValidHdr_ReturnsCorrectDate()
+        [Category("ExternalWbkHandler")]
+        [TestCase("Session 40 Total 5/2/16 [2.00]", "5/2/16")]
+        [TestCase("Session 40 Total 05/02/16 [2.00]", "5/2/16")]
+        [TestCase("Session 40 Total 05/02/2016 [2.00]", "5/2/16")]
+        public void GetDatePortionOfHeader_ValidHdrs_ReturnsCorrectDate(string hdr, string dt)
         {
-            DateTime dtHdr =
-                ExternalWbkHandler.GetDatePortionOfHeader(
-                    "Session 40 Total 5/2/16 [2.00]");
-            Assert.AreEqual(dtHdr, DateTime.Parse("5/2/16"));
+            ExternalWbkHandler ewh = new ExternalWbkHandler();
+            DateTime dtHdr = ewh.GetDatePortionOfHeader(hdr);
+            Assert.AreEqual(dtHdr, DateTime.Parse(dt));
         }
     }
 }

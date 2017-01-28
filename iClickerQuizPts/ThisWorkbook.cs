@@ -12,22 +12,6 @@ using Office = Microsoft.Office.Core;
 
 using iClickerQuizPts.AppExceptions;
 using iClickerQuizPts.ListObjMgmt;
-
-
-/*
- * Range names...
- * Wbk scope:
- * ptrSemester
- * ptrCourse
- * 
- * 
- * Sheet1 scope:
- * rowSessionNmbr
- * rowCourseWk
- * rowSession
- * rowTtlPts
- */
- 
  
 namespace iClickerQuizPts
 {
@@ -36,14 +20,16 @@ namespace iClickerQuizPts
     /// </summary>
     public enum WkSession : byte
     {
-        /// <summary>No session has been selected yet.
+        /// <summary>
+        /// No session has been selected yet.
         /// </summary>
         None = 0,
         /// <summary>
         /// First recitation of a given week.
         /// </summary>
         First,
-        /// <summary>Second recitation of a given week.
+        /// <summary>
+        /// Second recitation of a given week.
         /// </summary>
         Second,
         /// <summary>
@@ -51,6 +37,29 @@ namespace iClickerQuizPts
         /// </summary>
         Third
     }
+
+    /// <summary>
+    /// Specifies constants indicating the scope of a named range in Excel.
+    /// </summary>
+    /// <remarks>
+    /// This enumeration is used primarily for exception handling.
+    /// </remarks>
+    public enum RangeScope : byte
+    {
+        /// <summary>
+        /// Scope not specified.
+        /// </summary>
+        NotSpecified = 0,
+        /// <summary>
+        /// A named range in Excel is scoped to the workbook.
+        /// </summary>
+        Wkbk = 1,
+        /// <summary>
+        /// A named rangle is Excel is scoped to a particular worksheet.
+        /// </summary>
+        Wksheet =2
+    }
+
 
     /// <summary>
     /// Provides a mechanism for pairing the name of each Excel <see cref="Excel.ListObject"/> 
@@ -112,6 +121,10 @@ namespace iClickerQuizPts
 
         private QuizDataListObjMgr _qdLOMgr;
         private DblDippersListObjMgr _ddsLOMgr;
+
+        private NamedRangeManager _nrMgr = new NamedRangeManager();
+        private string[] _wbkNmdRngs = { "ptrSemester", "ptrCourse" };
+        private string[] _wshNmdRngs = { "rowSessionNmbr", "rowCourseWk", "rowSession", "rowTtlPts" };
         
         #endregion
 
@@ -146,6 +159,7 @@ namespace iClickerQuizPts
 
         private void ThisWorkbook_Open()
         {
+
             try
             {
                 InstantiateListObjWrapperClasses();
@@ -172,12 +186,22 @@ namespace iClickerQuizPts
 
             try
             {
-                SetWbkScopedNamedRanges();
+                VerifyWbkScopedNames();
+            }
+            catch (MissingInvalidNmdRngException ex)
+            {
+                MsgBoxGenerator.SetMissingWbkNamedRangeMsg(ex.RangeName);
+                MsgBoxGenerator.ShowMsg(MessageBoxButtons.OK);
+                return; // ...terminate program execution
             }
 
-            catch (MissingNamedRangeException ex)
+            try
             {
-                MsgBoxGenerator.SetMissingNamedRngMsg(ex.Message);
+                VerifyWshScopedNames();
+            }
+            catch (MissingInvalidNmdRngException ex)
+            {
+                MsgBoxGenerator.SetMissingInvalidWshNmdRngMsg(ex.ParentWsh, ex.RangeName);
                 MsgBoxGenerator.ShowMsg(MessageBoxButtons.OK);
                 return; // ...terminate program execution
             }
@@ -188,42 +212,82 @@ namespace iClickerQuizPts
             // Comment...
         }
 
-        private void SetWbkScopedNamedRanges()
+        private void InstantiateListObjWrapperClasses()
         {
-            string[] iClickerRngNmz = { "ptrSemester", "ptrCourse" };
-            int nmbrWbkNmz = Globals.ThisWorkbook.Names.Count;
+            // Define the wsh-ListObj pairs...
+            WshListobjPair quizDataLOInfo =
+                new WshListobjPair("tblClkrQuizGrades", Globals.Sheet1.Name);
+            WshListobjPair dblDpprsLOInfo =
+                new WshListobjPair("tblDblDippers", Globals.Sheet2.Name);
 
-            for (int i =0; i < iClickerRngNmz.Length; i++)
+            // Instantiate quiz qata class...
+            try
             {
-                bool foundiClickerRng = false;
-                string iClkrNm = iClickerRngNmz[i];
-                for(int j = 1; j <= nmbrWbkNmz; j++)
-                {
-                    Excel.Name nmdRng = Globals.ThisWorkbook.Names.Item(j);
-                    if(iClkrNm == nmdRng.Name)
-                    {
-                        foundiClickerRng = true;
-                        try
-                        {
-                            Excel.Range r = nmdRng.RefersToRange;
-                        }
-                        catch
-                        {
-
-                        }
-                    }
-
-                }
-
-                if(!foundiClickerRng)
-                {
-                    MissingNamedRangeException ex = new MissingNamedRangeException();
-                    throw ex;
-                    break;
-                }
-
+                _qdLOMgr = new QuizDataListObjMgr(quizDataLOInfo);
+            }
+            catch (ApplicationException ex)
+            {
+                throw ex;
+            }
+            try
+            {
+                _qdLOMgr.SetListObjAndParentWshPpts();
+            }
+            catch (ApplicationException ex)
+            {
+                throw ex;
             }
 
+            // Instantiate double dippers class...
+            try
+            {
+                _ddsLOMgr = new DblDippersListObjMgr(dblDpprsLOInfo);
+            }
+            catch (ApplicationException ex)
+            {
+                throw ex;
+            }
+            try
+            {
+                _ddsLOMgr.SetListObjAndParentWshPpts();
+            }
+            catch (ApplicationException ex)
+            {
+                throw ex;
+            }
+        }
+
+        private void VerifyWbkScopedNames()
+        {
+            for (int i = 0; i < _wbkNmdRngs.Length; i++)
+            {
+                string iClkrNm = _wbkNmdRngs[i];
+                try
+                {
+                    _nrMgr.ConfirmWorkbookScopedRangeExists(iClkrNm);
+                }
+                catch(MissingInvalidNmdRngException ex)
+                {
+                    throw ex;
+                }
+            }
+        } 
+
+        private void VerifyWshScopedNames()
+        {
+            for(int i = 0; i < _wshNmdRngs.Length; i++)
+            {
+                string qzDataWshNm = Globals.Sheet1.Name; // ...since this is the only sheet holding named ranges
+                string iClikerNm = _wshNmdRngs[i];
+                try
+                {
+                    _nrMgr.ConfirmWorksheetScopedRangeExists(qzDataWshNm, iClikerNm);
+                }
+                catch(MissingInvalidNmdRngException ex)
+                {
+                    throw ex;
+                }
+            }
         }
 
         private void PopulateQuizDates()
@@ -239,54 +303,7 @@ namespace iClickerQuizPts
             }
         }
 
-        /// <summary>
-        /// Instantiates instances of the <see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager"/>-derived 
-        /// classes that will be used in this application.
-        /// </summary>
-        private void InstantiateListObjWrapperClasses()
-        {
-            // Define the wsh-ListObj pairs...
-            WshListobjPair quizDataLOInfo =
-                new WshListobjPair("tblClkrQuizGrades", Globals.Sheet1.Name);
-            WshListobjPair dblDpprsLOInfo =
-                new WshListobjPair("tblDblDippers", Globals.Sheet2.Name);
-
-            // Instantiate quiz qata class...
-            try
-            {
-                _qdLOMgr = new QuizDataListObjMgr(quizDataLOInfo);
-            }
-            catch(ApplicationException ex)
-            {
-                throw ex;
-            }
-            try
-            {
-                _qdLOMgr.SetListObjAndParentWshPpts();
-            }
-            catch(ApplicationException ex)
-            {
-                throw ex;
-            }
-
-            // Instantiate double dippers class...
-            try
-            {
-                _ddsLOMgr = new DblDippersListObjMgr(dblDpprsLOInfo);
-            }
-            catch(ApplicationException ex)
-            {
-                throw ex;
-            }
-            try
-            {
-                _ddsLOMgr.SetListObjAndParentWshPpts();
-            }
-            catch(ApplicationException ex)
-            {
-                throw ex;
-            }
-        }
+        
 
 
 

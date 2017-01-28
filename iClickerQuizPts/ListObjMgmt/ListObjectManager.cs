@@ -100,7 +100,7 @@ namespace iClickerQuizPts.ListObjMgmt
 
         /// <summary>
         /// Sets <list type="bullet">
-        /// <item>Parent <see cref="Excel.Worksheet"/> of <see cref="Excel.ListObject"/></item>
+        /// <item>parent <see cref="Excel.Worksheet"/> of <see cref="Excel.ListObject"/></item>
         /// <item><see cref="Excel.ListObject"/> itself</item>
         /// <item><see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager.DoesListObjHaveData"/> property</item>
         /// </list>

@@ -16,6 +16,10 @@ using iClickerQuizPts.AppExceptions;
 
 namespace iClickerQuizPts
 {
+    /// <summary>
+    /// Provides a mechanism for interacting with the iClicker-generated <see cref="Excel.Workbook"/> 
+    /// containing the raw quiz data.
+    /// </summary>
     public class ExternalWbkHandler
     {
         #region fields
@@ -24,6 +28,9 @@ namespace iClickerQuizPts
         #endregion
 
         #region Ctor
+        /// <summary>
+        /// Instantiates a new instance of an <see cref="iClickerQuizPts.ExternalWbkHandler"/>.
+        /// </summary>
         public ExternalWbkHandler()
         {
             //AppSettingsReader ar = new AppSettingsReader();
@@ -69,6 +76,15 @@ namespace iClickerQuizPts
             return userSelectedWbk;
         }
 
+        /// <summary>
+        /// Retrieves the contents of the column headers for those data columns which
+        /// contain student quiz scores.
+        /// </summary>
+        /// <param name="noCols">The number of columns containing student quiz scores.
+        /// <para>Do <i>not</i> include in this count columns for things like 
+        /// student names or student email addresses.</para>
+        /// </param>
+        /// <returns>A string array of the contents of the quiz-data column headers.</returns>
         public string[] GetQuizFileHeaders(out long noCols)
         {
             Excel.Worksheet wsData = _wbkTestData.Worksheets[1];
@@ -78,6 +94,15 @@ namespace iClickerQuizPts
             return hdrContents;
         }
 
+        /// <summary>
+        /// Extracts the date portion of headers over the quiz-data-only columns
+        /// of the iClicker-generated <see cref="Excel.Workbook"/> of raw 
+        /// student quiz scores.
+        /// </summary>
+        /// <param name="headers">>A string array of the contents of the quiz-data column headers.</param>
+        /// <param name="arrSize">The size of the array - i.e., the number of quiz-data column headers.</param>
+        /// <returns>A generic <code>List&lt;T&gt;</code>, of type <code>DateTime</code>, 
+        /// of the dates embedded in the headers of the quiz-data columns.</returns>
         public List<DateTime> GetQuizDatesFromHeaders(string[] headers, long arrSize)
         {
             List<DateTime> quizDates = new List<DateTime>();

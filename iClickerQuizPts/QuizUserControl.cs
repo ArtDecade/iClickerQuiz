@@ -10,8 +10,14 @@ using System.Windows.Forms;
 
 namespace iClickerQuizPts
 {
+    /// <summary>
+    /// Respresents the workbook&apos;s action panel.
+    /// </summary>
     public partial class QuizUserControl : UserControl
     {
+        /// <summary>
+        /// Instantiates an instance of the workbook&apos;s action panel.
+        /// </summary>
         public QuizUserControl()
         {
             InitializeComponent();

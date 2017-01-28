@@ -62,7 +62,8 @@
   </Choose>
   <ItemGroup>
     <Compile Include="ExternalWbkHandlerTests.cs" />
-    <Compile Include="ListObjectManagerDerivedTests.cs" />
+    <Compile Include="ListObjectManagerTests.cs" />
+    <Compile Include="NamedReferenceManagerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

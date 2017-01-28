@@ -11,7 +11,7 @@ using iClickerQuizPts.ListObjMgmt;
 using NUnit.Framework;
 using NSubstitute;
 
-using Excel = Microsoft.Office.Interop.Excel;
+
 
 namespace iClickerQuizPts.UnitTests
 {
@@ -24,7 +24,7 @@ namespace iClickerQuizPts.UnitTests
 
     [TestFixture]
     [Category("ListObjectManagerTests")]
-    public class ListObjectManagerDerivedTests
+    public class ListObjectManagerTests
     {
         const string QZ_GRADES_TBL = "tblClkrQuizGrades";
         const string QZ_GRADES_WSH = "iCLICKERQuizPoints";

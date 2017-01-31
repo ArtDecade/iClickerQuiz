@@ -40,8 +40,8 @@
             this.lblLatestQuizDate = new System.Windows.Forms.Label();
             this.btnImportQuizData = new System.Windows.Forms.Button();
             this.gboxDatesToShow = new System.Windows.Forms.GroupBox();
-            this.radNewDatesOnly = new System.Windows.Forms.RadioButton();
             this.radAllDates = new System.Windows.Forms.RadioButton();
+            this.radNewDatesOnly = new System.Windows.Forms.RadioButton();
             this.gboxDatesToShow.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -49,7 +49,7 @@
             // 
             this.lblCalendar.AutoSize = true;
             this.lblCalendar.Enabled = false;
-            this.lblCalendar.Location = new System.Drawing.Point(13, 123);
+            this.lblCalendar.Location = new System.Drawing.Point(13, 203);
             this.lblCalendar.Name = "lblCalendar";
             this.lblCalendar.Size = new System.Drawing.Size(98, 13);
             this.lblCalendar.TabIndex = 1;
@@ -132,9 +132,9 @@
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(13, 140);
+            this.comboBox1.Location = new System.Drawing.Point(13, 220);
             this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 21);
+            this.comboBox1.Size = new System.Drawing.Size(200, 21);
             this.comboBox1.TabIndex = 7;
             // 
             // lblLatestQuizLbl
@@ -172,23 +172,12 @@
             // 
             this.gboxDatesToShow.Controls.Add(this.radAllDates);
             this.gboxDatesToShow.Controls.Add(this.radNewDatesOnly);
-            this.gboxDatesToShow.Location = new System.Drawing.Point(13, 173);
+            this.gboxDatesToShow.Location = new System.Drawing.Point(13, 113);
             this.gboxDatesToShow.Name = "gboxDatesToShow";
-            this.gboxDatesToShow.Size = new System.Drawing.Size(200, 70);
+            this.gboxDatesToShow.Size = new System.Drawing.Size(200, 72);
             this.gboxDatesToShow.TabIndex = 11;
             this.gboxDatesToShow.TabStop = false;
             this.gboxDatesToShow.Text = "Dates to Show";
-            // 
-            // radNewDatesOnly
-            // 
-            this.radNewDatesOnly.AutoSize = true;
-            this.radNewDatesOnly.Location = new System.Drawing.Point(7, 20);
-            this.radNewDatesOnly.Name = "radNewDatesOnly";
-            this.radNewDatesOnly.Size = new System.Drawing.Size(120, 17);
-            this.radNewDatesOnly.TabIndex = 0;
-            this.radNewDatesOnly.TabStop = true;
-            this.radNewDatesOnly.Text = "New quiz dates only";
-            this.radNewDatesOnly.UseVisualStyleBackColor = true;
             // 
             // radAllDates
             // 
@@ -201,6 +190,17 @@
             this.radAllDates.Text = "All quiz dates";
             this.radAllDates.UseVisualStyleBackColor = true;
             // 
+            // radNewDatesOnly
+            // 
+            this.radNewDatesOnly.AutoSize = true;
+            this.radNewDatesOnly.Location = new System.Drawing.Point(7, 20);
+            this.radNewDatesOnly.Name = "radNewDatesOnly";
+            this.radNewDatesOnly.Size = new System.Drawing.Size(120, 17);
+            this.radNewDatesOnly.TabIndex = 0;
+            this.radNewDatesOnly.TabStop = true;
+            this.radNewDatesOnly.Text = "New quiz dates only";
+            this.radNewDatesOnly.UseVisualStyleBackColor = true;
+            // 
             // QuizUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -208,15 +208,15 @@
             this.AutoSize = true;
             this.Controls.Add(this.gboxDatesToShow);
             this.Controls.Add(this.btnImportQuizData);
+            this.Controls.Add(this.lblCalendar);
             this.Controls.Add(this.lblLatestQuizDate);
-            this.Controls.Add(this.lblLatestQuizLbl);
             this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.lblLatestQuizLbl);
             this.Controls.Add(this.btnOpenQuizWbk);
             this.Controls.Add(this.comboSession);
             this.Controls.Add(this.lblLectureSession);
             this.Controls.Add(this.comboCourseWeek);
             this.Controls.Add(this.lblCourseWk);
-            this.Controls.Add(this.lblCalendar);
             this.Location = new System.Drawing.Point(10, 0);
             this.Margin = new System.Windows.Forms.Padding(10);
             this.Name = "QuizUserControl";

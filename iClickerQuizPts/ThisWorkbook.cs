@@ -10,6 +10,7 @@ using Microsoft.VisualStudio.Tools.Applications.Runtime;
 using Excel = Microsoft.Office.Interop.Excel;
 using Office = Microsoft.Office.Core;
 
+using System.Configuration;
 using iClickerQuizPts.AppExceptions;
 using iClickerQuizPts.ListObjMgmt;
  
@@ -113,9 +114,11 @@ namespace iClickerQuizPts
     public partial class ThisWorkbook
     {
         #region Fields
+        private byte _nmbNonScoreCols;
         private bool _virginWbk = false;
         private QuizUserControl _ctrl = new QuizUserControl();
         private List<DateTime> _qDts = new List<DateTime>();
+        private List<string> _sessionNos = new List<string>();
         private Excel.ListObject _tblQuizGrades = null;
         private List<WshListobjPair> _listObjsByWsh = new List<WshListobjPair>();
 
@@ -205,11 +208,38 @@ namespace iClickerQuizPts
                 MsgBoxGenerator.ShowMsg(MessageBoxButtons.OK);
                 return; // ...terminate program execution
             }
+
+            try
+            {
+                ReadAppConfigDataIntoFields();
+            }
+            catch (InalidAppConfigItemException ex)
+            {
+                MsgBoxGenerator.SetInvalidAppConfigKeyMsg(ex.MissingKey);
+                MsgBoxGenerator.ShowMsg(MessageBoxButtons.OK);
+                return; // ...terminate program execution
+            }
+
         }
 
         private void ThisWorkbook_Shutdown(object sender, System.EventArgs e)
         {
             // Comment...
+        }
+
+        private void ReadAppConfigDataIntoFields()
+        {
+            AppSettingsReader ar = new AppSettingsReader();
+            try
+            {
+                _nmbNonScoreCols = (byte)ar.GetValue("NmbrNonScoreCols", typeof(byte));
+            }
+            catch
+            {
+                InalidAppConfigItemException ex = new InalidAppConfigItemException();
+                ex.MissingKey = "NmbrNonScoreCols";
+                throw ex;
+            }
         }
 
         private void InstantiateListObjWrapperClasses()
@@ -303,7 +333,19 @@ namespace iClickerQuizPts
             }
         }
 
-        
+        private void CheckVirginWbkStatus()
+        {
+            if (!_qdLOMgr.ListObjectHasData && !_ddsLOMgr.ListObjectHasData)
+            {
+                _virginWbk = true;
+                FormCourseSemesterQuestionaire frmSemCrs = new FormCourseSemesterQuestionaire();
+                frmSemCrs.Show();
+
+
+            }
+        }
+
+
 
 
 

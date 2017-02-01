@@ -76,73 +76,9 @@ namespace iClickerQuizPts
             return userSelectedWbk;
         }
 
-        /// <summary>
-        /// Retrieves the contents of the column headers for those data columns which
-        /// contain student quiz scores.
-        /// </summary>
-        /// <param name="noCols">The number of columns containing student quiz scores.
-        /// <para>Do <i>not</i> include in this count columns for things like 
-        /// student names or student email addresses.</para>
-        /// </param>
-        /// <returns>A string array of the contents of the quiz-data column headers.</returns>
-        public string[] GetQuizFileHeaders(out long noCols)
-        {
-            Excel.Worksheet wsData = _wbkTestData.Worksheets[1];
-            noCols =wsData.UsedRange.Columns.Count; // ...out param
-            Excel.Range hdrs = wsData.UsedRange.Resize[1];
-            string[] hdrContents = hdrs.Value2;
-            return hdrContents;
-        }
+    
 
-        /// <summary>
-        /// Extracts the date portion of headers over the quiz-data-only columns
-        /// of the iClicker-generated <see cref="Excel.Workbook"/> of raw 
-        /// student quiz scores.
-        /// </summary>
-        /// <param name="headers">>A string array of the contents of the quiz-data column headers.</param>
-        /// <param name="arrSize">The size of the array - i.e., the number of quiz-data column headers.</param>
-        /// <returns>A generic <code>List&lt;T&gt;</code>, of type <code>DateTime</code>, 
-        /// of the dates embedded in the headers of the quiz-data columns.</returns>
-        public List<DateTime> GetQuizDatesFromHeaders(string[] headers, long arrSize)
-        {
-            List<DateTime> quizDates = new List<DateTime>();
-            for(int i = _firstDateCol; i <= arrSize; i++)
-            {
-                quizDates.Add(GetDatePortionOfHeader(headers[i]));
-            }
-            return quizDates;
-        }
-
-        /// <summary>
-        /// Extracts the date portion from the header cell of an iClicker data worksheet.
-        /// </summary>
-        /// <param name="hdr">The contents of a column header of an iClicker data worksheet.</param>
-        /// <returns>The on which an iClicker quiz was given.</returns>
-        /// <example>The text in the header cell is in a non-standard format and 
-        /// therefore the enclosed date cannot be extracted.
-        /// <para>NOTE: This exception will be thrown if this method is passed the text 
-        /// from a cell which is not a header for quiz results (i.e., if the code is 
-        /// pointing to an incorrect cell).</para></example>
-        public DateTime GetDatePortionOfHeader(string hdr)
-        {
-            DateTime quizDate;
-            try
-            {
-                hdr = hdr.Remove(1, "Session".Length + 1);
-                hdr = hdr.Replace("Total ", string.Empty);
-                hdr = hdr.Trim();
-                // Hdr will now be something like:  "40 5/2/16 [2.00]"...
-                int space1 = hdr.IndexOf(" ", 1);
-                int space2 = hdr.IndexOf(" ", space1 +1);
-                quizDate = DateTime.Parse(hdr.Substring(space1 + 1, space2 - space1 - 1));
-                return quizDate;
-            }
-            catch(ParsingDateFmHdrException e)
-            {
-                e.HeaderText = hdr;
-                throw e;
-            }
-        }
+       
         #endregion
     }
 }

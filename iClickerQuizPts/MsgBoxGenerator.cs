@@ -140,5 +140,20 @@ namespace iClickerQuizPts
             _msg = string.Format($"{S1}\n\n\tNamed Range:  {rngNm}\n\tWorksheet:  {wsh}");
             _msg = string.Format($"_msg\n\n{S2}{S3}\n\n\n{CANNOT_CONTINUE}");
         }
+
+        /// <summary>
+        /// Sets the caption and builds the message that will be presented to the user whenever 
+        /// a <see cref="iClickerQuizPts.AppExceptions.InalidAppConfigItemException"/> is thrown.
+        /// </summary>
+        /// <param name="acKey">The key we are attempting to find.</param>
+        public static void SetInvalidAppConfigKeyMsg(string acKey)
+        {
+            _caption = "Missing App.Config File Key";
+
+            const string S1 =
+                "We cannot find the following key inside the appSettings section of the App.Config file:";
+
+            _msg = string.Format($"{S1}\n\n\t{acKey}\n\n{CANNOT_CONTINUE}");
+        }
     }
 }

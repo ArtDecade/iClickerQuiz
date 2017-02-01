@@ -53,7 +53,31 @@ namespace iClickerQuizPts
         private string _colNmEmail;
         private string _colNmFirstNm;
         private string _colNmLastNm;
+        private List<string> _sessionNos = new List<string>();
         private DataTable _dt;
+        private QuizDataParser _hdrParser = new QuizDataParser();
+        #endregion
+
+        #region ppts
+        /// <summary>
+        /// Gets the <see cref="System.Data.DataTable"/> holding the quiz scores
+        /// from the raw iClicker data file.
+        /// </summary>
+        public DataTable RawQuizScoresDataTable
+        {
+            get
+            { return _dt; }
+        }
+
+        /// <summary>
+        /// Gets a <see cref="System.Collections.Generic.List{T}"/> of session numbers 
+        /// in the raw iClicker data file.
+        /// </summary>
+        public List<string> SessionNos
+        {
+            get
+            { return _sessionNos; }
+        }
         #endregion
 
         #region ctor
@@ -66,16 +90,30 @@ namespace iClickerQuizPts
         /// <exception cref="iClickerQuizPts.AppExceptions.ReadingExternalWbkException">
         /// The file is either a *.csv and *.xlx files (or a different kind 
         /// of file entirely).</exception>
+        /// <exception cref="iClickerQuizPts.AppExceptions.InalidAppConfigItemException">
+        /// An entry in the <code>appSettings</code> section in the <code>App.config</code> 
+        /// file could not be found.
+        /// </exception>
         public void EPPlusManger(string wbkFullNm)
         {
-            if (!wbkFullNm.EndsWith("xlsx"))
+            if (wbkFullNm.EndsWith("xlsx"))
+            {
+                _wbkFullNm = wbkFullNm;
+                try
+                {
+                    ReadAppConfigDataIntoFields();
+                }
+                catch(InalidAppConfigItemException ex)
+                {
+                    throw ex;
+                }
+            }
+            else
             {
                 ReadingExternalWbkException ex = new ReadingExternalWbkException();
                 ex.ImportResult = ImportResult.NotExcel;
                 throw ex;
             }
-            else
-                _wbkFullNm = wbkFullNm;
         }
         #endregion
 
@@ -83,25 +121,110 @@ namespace iClickerQuizPts
         private void ReadAppConfigDataIntoFields()
         {
             AppSettingsReader ar = new AppSettingsReader();
-            _studentEmailCol = (byte)ar.GetValue("ColNoEmailXL", typeof(byte));
-            _studentNameCol = (byte)ar.GetValue("ColNoStdntNmXL", typeof(byte));
-            _firstDataCol = (byte)ar.GetValue("ColNoDataBeginsXL", typeof(byte));
-            _colNmID = (string)ar.GetValue("ColID", typeof(string));
-            _colNmEmail = (string)ar.GetValue("ColEmail", typeof(string));
-            _colNmFirstNm = (string)ar.GetValue("ColFN", typeof(string));
-            _colNmLastNm = (string)ar.GetValue("ColLN", typeof(string));
+            try
+            {
+                _studentEmailCol = (byte)ar.GetValue("ColNoEmailXL", typeof(byte));
+            }
+            catch
+            {
+                InalidAppConfigItemException ex = new InalidAppConfigItemException();
+                ex.MissingKey = "ColNoEmailXL";
+                throw ex;
+            }
+
+            try
+            {
+                _studentNameCol = (byte)ar.GetValue("ColNoStdntNmXL", typeof(byte));
+            }
+            catch
+            {
+                InalidAppConfigItemException ex = new InalidAppConfigItemException();
+                ex.MissingKey = "ColNoStdntNmXL";
+                throw ex;
+            }
+
+            try
+            {
+                _firstDataCol = (byte)ar.GetValue("ColNoDataBeginsXL", typeof(byte));
+               
+            }
+            catch
+            {
+                InalidAppConfigItemException ex = new InalidAppConfigItemException();
+                ex.MissingKey = "ColNoDataBeginsXL";
+                throw ex;
+            }
+
+            try
+            {
+                _colNmID = (string)ar.GetValue("ColID", typeof(string));
+            }
+            catch
+            {
+                InalidAppConfigItemException ex = new InalidAppConfigItemException();
+                ex.MissingKey = "ColID";
+                throw ex;
+            }
+
+            try
+            {
+                _colNmEmail = (string)ar.GetValue("ColEmail", typeof(string));
+            }
+            catch
+            {
+                InalidAppConfigItemException ex = new InalidAppConfigItemException();
+                ex.MissingKey = "ColEmail";
+                throw ex;
+            }
+
+            try
+            {
+                _colNmFirstNm = (string)ar.GetValue("ColFN", typeof(string));
+            }
+            catch
+            {
+                InalidAppConfigItemException ex = new InalidAppConfigItemException();
+                ex.MissingKey = "ColFN";
+                throw ex;
+            }
+
+            try
+            {
+                _colNmLastNm = (string)ar.GetValue("ColLN", typeof(string));
+            }
+            catch
+            {
+                InalidAppConfigItemException ex = new InalidAppConfigItemException();
+                ex.MissingKey = "ColLN";
+                throw ex;
+            }
         }
 
         /// <summary>
-        /// Reads an external workbook into EPPlus.
-        /// </summary>
+        /// Utilizes EPPlus to move all the data from the quiz data worksheet into a 
+        /// <see cref="System.Data.DataTable"/>.  
         /// <exception cref="iClickerQuizPts.AppExceptions.ReadingExternalWbkException">
         /// There are any number of problems with the format and/or 
         /// structure of the workbook and/or the worksheet containing the quiz
         /// results data.  The exact nature of the problem is specified in
         /// the exception's message property.</exception>
-        public virtual void VerifyWbkFormatIntegrityAndGetWshDimensions()
+        /// <exception cref="iClickerQuizPts.AppExceptions.InvalidQuizDataHeaderException">
+        /// A data column header in a raw iClicker data file is not in the expected 
+        /// format.  As such, there are problems extracting any of:
+        /// <list type="bullet">
+        /// <item>session number</item>
+        /// <item>quiz/session date</item>
+        /// <item>maximum points for the quiz</item>
+        /// </list>
+        /// </exception>
+        /// </summary>
+        public virtual void CreateQuizScoresDataTable()
         {
+            _dt = new DataTable("RawQuizDataTable");
+            string sessionNo;
+            string sessionDt;
+            string maxPts;
+
             using (ExcelPackage p = new ExcelPackage())
             {
                 using (FileStream stream = new FileStream(_wbkFullNm, FileMode.Open))
@@ -110,7 +233,11 @@ namespace iClickerQuizPts
                     p.Load(stream);
                     ExcelWorksheet ws = p.Workbook.Worksheets[1];
 
-                    // Trap for problems with the worksheet...
+                    /*
+                     * 
+                     * TRAP FOR PROBLEMS IN THE WORKSHEET...
+                     * 
+                     */
                     if (ws == null)
                     {
                         ReadingExternalWbkException ex =
@@ -131,6 +258,11 @@ namespace iClickerQuizPts
                     }
 
 
+                    /*
+                     * 
+                     * GATHER WORKSHEET DIMENSIONS, TRAPPING FOR MISSING DATA...
+                     * 
+                     */
                     // Find last col in wsh (header row should always have values)...
                     while (_lastCol > 1)
                     {
@@ -150,8 +282,7 @@ namespace iClickerQuizPts
                         throw ex;
                     }
 
-                    // Find last row of data in wsh.  We test the 
-                    // Student ID column, which should always have an entry...
+                    // Find last row of data in wsh.  Student ID column should always have an entry...
                     while (_lastRow > 1)
                     {
                         ExcelRange c = ws.Cells[_lastRow, _studentEmailCol];
@@ -164,30 +295,18 @@ namespace iClickerQuizPts
                     // Trap for no data rows...
                     if (_lastRow == 1)
                     {
-                        string msg = "There are not data rows - there is only the header row";
+                        string msg = "There are no rows of data.";
                         ReadingExternalWbkException ex = new ReadingExternalWbkException(msg);
                         ex.ImportResult = ImportResult.WrongFormat;
                         throw ex;
                     }
-                }
-            }
-        }
 
-        /// <summary>
-        /// Create and add all of the columns required to move the data from 
-        /// the quiz data worksheet into a <see cref="System.Data.DataTable"/>.
-        /// </summary>
-        public virtual void CreateDataFreeQuizDataTable()
-        {
-            _dt = new DataTable("RawQuizDataTable");
-            using (ExcelPackage p = new ExcelPackage())
-            {
-                using (FileStream stream = new FileStream(_wbkFullNm, FileMode.Open))
-                {
-                    // Read the workbook and it's 1st (& presumably only) worksheet...
-                    p.Load(stream);
-                    ExcelWorksheet ws = p.Workbook.Worksheets[1];
 
+                    /*
+                     * 
+                     * CREATE COLUMNS & ADD TO DATATABLE...
+                     * 
+                     */
                     // Create a primary key column...
                     DataColumn colID = new DataColumn(_colNmID, typeof(int));
                     colID.AllowDBNull = false;
@@ -215,27 +334,50 @@ namespace iClickerQuizPts
                     // Create & add columns for quiz data...
                     for (int i = _firstDataCol; i <= _lastCol; i++)
                     {
-                        string colNm = ws.Cells[1, i].Value.ToString().Trim();
-                        DataColumn col = new DataColumn(colNm, typeof(byte));
-                    }
-                }
-            }
-        }
+                        string colHdr = ws.Cells[1, i].Value.ToString().Trim();
+                        DataColumn col = new DataColumn(colHdr, typeof(byte));
+                        try
+                        {
+                            _hdrParser.ExtractSessionDataFromColumnHeader(colHdr,
+                                out sessionNo, out sessionDt, out maxPts);
 
-        /// <summary>
-        /// Populates the <see cref="System.Data.DataTable"/> with data from
-        /// the worksheet of raw quiz data.
-        /// </summary>
-        public virtual void PopulateTheDataTable()
-        {
-            using (ExcelPackage p = new ExcelPackage())
-            {
-                using (FileStream stream = new FileStream(_wbkFullNm, FileMode.Open))
-                {
-                    // Read the workbook and it's 1st (& presumably only) worksheet...
-                    p.Load(stream);
-                    ExcelWorksheet ws = p.Workbook.Worksheets[1];
-                    string fullNm;
+                            // Populate the List<T> off session numbers, trapping 
+                            // for duplicates...
+                            if(!_sessionNos.Contains(sessionNo))
+                                _sessionNos.Add(sessionNo);
+                            else
+                            {
+                                string msg = 
+                                    string.Format($"Multiple instances of Session {sessionNo} are in {_wbkFullNm}.");
+                                ReadingExternalWbkException ex =
+                                    new ReadingExternalWbkException(msg);
+                                ex.ImportResult = ImportResult.WrongFormat;
+                                throw ex;
+                            }
+
+                            // Set extended properties of column, then add column...
+                            col.ExtendedProperties["Session Nmbr"] = sessionNo;
+                            col.ExtendedProperties["QuizDate"] = sessionDt;
+                            col.ExtendedProperties["MaxQuizPts"] = maxPts;
+                            col.ExtendedProperties["ComboBoxLbl"] =
+                                string.Format($"Session {sessionNo} - {sessionDt}");
+                            _dt.Columns.Add(col);
+                        }
+                        catch
+                        {
+                            InvalidQuizDataHeaderException ex = new InvalidQuizDataHeaderException();
+                            ex.HeaderText = colHdr;
+                            throw ex;
+                        }
+                    }
+
+
+                    /*
+                     * 
+                     * POPULATE ROWS WITH DATA THEN ADD TO DATATABLE...
+                     * 
+                     */
+                    string studentFullNm;
 
                     // Loop through each data row...
                     for (int rowNo = 2; rowNo <= _lastRow; rowNo++)
@@ -243,9 +385,9 @@ namespace iClickerQuizPts
                         DataRow r = _dt.NewRow();
                         // Populate student name & email fields...
                         r[_colNmEmail] = ws.Cells[rowNo, _studentEmailCol].Value.ToString().Trim();
-                        fullNm = ws.Cells[rowNo, _studentNameCol].Value.ToString();
-                        r[_colNmLastNm] = ExtractLastNameFromFullName(fullNm);
-                        r[_colNmFirstNm] = ExtractFirstNameFromFullName(fullNm);
+                        studentFullNm = ws.Cells[rowNo, _studentNameCol].Value.ToString();
+                        r[_colNmLastNm] = _hdrParser.ExtractLastNameFromFullName(studentFullNm);
+                        r[_colNmFirstNm] = _hdrParser.ExtractFirstNameFromFullName(studentFullNm);
 
                         // Loop through each quiz data column...
                         for (int colNo = _firstDataCol; colNo <= _lastCol; colNo++)
@@ -258,45 +400,6 @@ namespace iClickerQuizPts
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Returns &quot;Doe&quot; given &quot;Doe, John&quot; or given
-        /// simply &quot;Doe&quot;
-        /// </summary>
-        /// <param name="fullNm">The student&apos;s full name, in 
-        /// either &quot;Last Name, First Name" or simply &quot;Last Name" format.</param>
-        /// <returns>The student&apos; first name.</returns>
-        public string ExtractFirstNameFromFullName(string fullNm)
-        {
-            string fn = string.Empty;
-            int cPos;
-            if (fullNm.Contains((char)44)) // ...(char)44 = comma (i.e., ",")
-            {
-                cPos = fullNm.IndexOf((char)44);
-                fn = fullNm.Substring(cPos + 1).Trim();
-            }
-            return fn;
-        }
-
-        /// <summary>
-        /// Returns &quot;John&quot; given &quot;Doe, John&quot; or 
-        /// <see cref="string.Empty"/> given &quot;Doe&quot;
-        /// simply &quot;Doe&quot;
-        /// </summary>
-        /// <param name="fullNm">The student&apos;s full name, in 
-        /// either &quot;Last Name, First Name" or simply &quot;Last Name" format.</param>
-        /// <returns>The student&apos; last name.</returns>
-        public string ExtractLastNameFromFullName(string fullNm)
-        {
-            string ln = fullNm.Trim();
-            int cPos;
-            if (fullNm.Contains((char)44))
-            {
-                cPos = fullNm.IndexOf((char)44);
-                ln = ln.Substring(0, cPos);
-            }
-            return ln;
         }
         #endregion
     }

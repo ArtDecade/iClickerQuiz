@@ -148,6 +148,7 @@
     <Compile Include="ThisWorkbook.Designer.cs">
       <DependentUpon>ThisWorkbook.Designer.xml</DependentUpon>
     </Compile>
+    <Compile Include="ThisWorkbookWrapper.cs" />
     <Compile Include="UserControlsHandler.cs" />
     <EmbeddedResource Include="FormCourseSemesterQuestionaire.resx">
       <DependentUpon>FormCourseSemesterQuestionaire.cs</DependentUpon>

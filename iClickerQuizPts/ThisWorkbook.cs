@@ -114,20 +114,17 @@ namespace iClickerQuizPts
     public partial class ThisWorkbook
     {
         #region Fields
-        private byte _nmbNonScoreCols;
-        private bool _virginWbk = false;
         private QuizUserControl _ctrl = new QuizUserControl();
         private List<DateTime> _qDts = new List<DateTime>();
         private List<string> _sessionNos = new List<string>();
         private Excel.ListObject _tblQuizGrades = null;
         private List<WshListobjPair> _listObjsByWsh = new List<WshListobjPair>();
 
+        private ThisWorkbookWrapper _twbkWrapper;
+
         private QuizDataListObjMgr _qdLOMgr;
         private DblDippersListObjMgr _ddsLOMgr;
 
-        private NamedRangeManager _nrMgr = new NamedRangeManager();
-        private string[] _wbkNmdRngs = { "ptrSemester", "ptrCourse" };
-        private string[] _wshNmdRngs = { "rowSessionNmbr", "rowCourseWk", "rowSession", "rowTtlPts" };
         
         #endregion
 
@@ -154,6 +151,8 @@ namespace iClickerQuizPts
         }
 
         #endregion
+
+        #region wbkEventHandlers
         private void ThisWorkbook_Startup(object sender, System.EventArgs e)
         {
             this.ActionsPane.Controls.Add(_ctrl);
@@ -162,10 +161,11 @@ namespace iClickerQuizPts
 
         private void ThisWorkbook_Open()
         {
+            _twbkWrapper = new ThisWorkbookWrapper();
 
             try
             {
-                InstantiateListObjWrapperClasses();
+                _twbkWrapper.InstantiateListObjWrapperClasses();
             }
             catch (InvalidWshListObjPairException ex)
             {
@@ -189,7 +189,7 @@ namespace iClickerQuizPts
 
             try
             {
-                VerifyWbkScopedNames();
+                _twbkWrapper.VerifyWbkScopedNames();
             }
             catch (MissingInvalidNmdRngException ex)
             {
@@ -200,7 +200,7 @@ namespace iClickerQuizPts
 
             try
             {
-                VerifyWshScopedNames();
+                _twbkWrapper.VerifyWshScopedNames();
             }
             catch (MissingInvalidNmdRngException ex)
             {
@@ -211,7 +211,7 @@ namespace iClickerQuizPts
 
             try
             {
-                ReadAppConfigDataIntoFields();
+                _twbkWrapper.ReadAppConfigDataIntoFields();
             }
             catch (InalidAppConfigItemException ex)
             {
@@ -220,105 +220,22 @@ namespace iClickerQuizPts
                 return; // ...terminate program execution
             }
 
+            _twbkWrapper.SetVirginWbkProperty();
+
+            if (_twbkWrapper.IsVirginWbk)
+                _twbkWrapper.PromptUserForCourseNameAndSemester();
+
+
+
         }
 
         private void ThisWorkbook_Shutdown(object sender, System.EventArgs e)
         {
             // Comment...
         }
+        #endregion
 
-        private void ReadAppConfigDataIntoFields()
-        {
-            AppSettingsReader ar = new AppSettingsReader();
-            try
-            {
-                _nmbNonScoreCols = (byte)ar.GetValue("NmbrNonScoreCols", typeof(byte));
-            }
-            catch
-            {
-                InalidAppConfigItemException ex = new InalidAppConfigItemException();
-                ex.MissingKey = "NmbrNonScoreCols";
-                throw ex;
-            }
-        }
-
-        private void InstantiateListObjWrapperClasses()
-        {
-            // Define the wsh-ListObj pairs...
-            WshListobjPair quizDataLOInfo =
-                new WshListobjPair("tblClkrQuizGrades", Globals.Sheet1.Name);
-            WshListobjPair dblDpprsLOInfo =
-                new WshListobjPair("tblDblDippers", Globals.Sheet2.Name);
-
-            // Instantiate quiz qata class...
-            try
-            {
-                _qdLOMgr = new QuizDataListObjMgr(quizDataLOInfo);
-            }
-            catch (ApplicationException ex)
-            {
-                throw ex;
-            }
-            try
-            {
-                _qdLOMgr.SetListObjAndParentWshPpts();
-            }
-            catch (ApplicationException ex)
-            {
-                throw ex;
-            }
-
-            // Instantiate double dippers class...
-            try
-            {
-                _ddsLOMgr = new DblDippersListObjMgr(dblDpprsLOInfo);
-            }
-            catch (ApplicationException ex)
-            {
-                throw ex;
-            }
-            try
-            {
-                _ddsLOMgr.SetListObjAndParentWshPpts();
-            }
-            catch (ApplicationException ex)
-            {
-                throw ex;
-            }
-        }
-
-        private void VerifyWbkScopedNames()
-        {
-            for (int i = 0; i < _wbkNmdRngs.Length; i++)
-            {
-                string iClkrNm = _wbkNmdRngs[i];
-                try
-                {
-                    _nrMgr.ConfirmWorkbookScopedRangeExists(iClkrNm);
-                }
-                catch(MissingInvalidNmdRngException ex)
-                {
-                    throw ex;
-                }
-            }
-        } 
-
-        private void VerifyWshScopedNames()
-        {
-            for(int i = 0; i < _wshNmdRngs.Length; i++)
-            {
-                string qzDataWshNm = Globals.Sheet1.Name; // ...since this is the only sheet holding named ranges
-                string iClikerNm = _wshNmdRngs[i];
-                try
-                {
-                    _nrMgr.ConfirmWorksheetScopedRangeExists(qzDataWshNm, iClikerNm);
-                }
-                catch(MissingInvalidNmdRngException ex)
-                {
-                    throw ex;
-                }
-            }
-        }
+        
 
         private void PopulateQuizDates()
         {
@@ -332,22 +249,6 @@ namespace iClickerQuizPts
                     QuizDates.Add(dt);
             }
         }
-
-        private void CheckVirginWbkStatus()
-        {
-            if (!_qdLOMgr.ListObjectHasData && !_ddsLOMgr.ListObjectHasData)
-            {
-                _virginWbk = true;
-                FormCourseSemesterQuestionaire frmSemCrs = new FormCourseSemesterQuestionaire();
-                frmSemCrs.Show();
-
-
-            }
-        }
-
-
-
-
 
         #region VSTO Designer generated code
 

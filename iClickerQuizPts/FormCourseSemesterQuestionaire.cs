@@ -31,12 +31,22 @@ namespace iClickerQuizPts
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-            Globals.Sheet1.Range["ptrSemester"].Value = this.txtSemester.Text;
-            Globals.Sheet1.Range["ptrSemester"].Locked = true;
-            Globals.Sheet1.Range["ptrCourse"].Value = this.txtSemester.Text;
-            Globals.Sheet1.Range["ptrCourse"].Locked = true;
+            if (this.txtCourseNm.Text == string.Empty || this.txtSemester.Text == string.Empty)
+            {
+                MessageBox.Show("Please fill out both fields.", "Incomplete Data", 
+                    MessageBoxButtons.OK);
+            }
+            else
+            {
+                Globals.Sheet1.Range["ptrSemester"].Value = this.txtSemester.Text;
+                Globals.Sheet1.Range["ptrSemester"].Locked = true;
+                Globals.Sheet1.Range["ptrCourse"].Value = this.txtSemester.Text;
+                Globals.Sheet1.Range["ptrCourse"].Locked = true;
 
-            Globals.Sheet1.Protect();
+                Globals.Sheet1.Protect();
+
+                this.Dispose();
+            }
         }
     }
 }

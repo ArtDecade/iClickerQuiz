@@ -20,13 +20,11 @@ namespace iClickerQuizPts
         #region fields
         private bool _virginWbk;
         private byte _nmbNonScoreCols;
-        private QuizDataListObjMgr _qdLOMgr;
-        private DblDippersListObjMgr _ddsLOMgr;
+        private QuizDataLOWrapper _qdLOMgr;
+        private DblDippersLOWrapper _ddsLOMgr;
 
-        private NamedRangeManager _nrMgr = new NamedRangeManager();
-        private string[] _wbkNmdRngs = { "ptrSemester", "ptrCourse" };
-        private string[] _wshNmdRngs =
-            { "rowSessionNmbr", "rowCourseWk", "rowSession", "rowTtlPts" };
+        private NamedRangeWrapper _nrMgr = new NamedRangeWrapper();
+        
         #endregion
 
         #region ppts
@@ -58,7 +56,7 @@ namespace iClickerQuizPts
             // Instantiate quiz qata class...
             try
             {
-                _qdLOMgr = new QuizDataListObjMgr(quizDataLOInfo);
+                _qdLOMgr = new QuizDataLOWrapper(quizDataLOInfo);
             }
             catch (ApplicationException ex)
             {
@@ -76,7 +74,7 @@ namespace iClickerQuizPts
             // Instantiate double dippers class...
             try
             {
-                _ddsLOMgr = new DblDippersListObjMgr(dblDpprsLOInfo);
+                _ddsLOMgr = new DblDippersLOWrapper(dblDpprsLOInfo);
             }
             catch (ApplicationException ex)
             {
@@ -99,17 +97,14 @@ namespace iClickerQuizPts
         /// <exception cref="iClickerQuizPts.AppExceptions.MissingInvalidNmdRngException">
         /// Caught and rethrown when there are problems with the validity of a 
         /// workbook-scoped named range.</exception>
-        public virtual void VerifyWbkScopedNames()
+        public virtual void VerifyWbkScopedNames(params string[] nms)
         {
-            for (int i = 0; i < _wbkNmdRngs.Length; i++)
+            for (int i = 0; i < nms.Length; i++)
             {
-                string iClkrNm = _wbkNmdRngs[i];
-                try
+                string iClkrNm = nms[i];
+                if(!_nrMgr.WorkbookScopedRangeExists(iClkrNm))
                 {
-                    _nrMgr.ConfirmWorkbookScopedRangeExists(iClkrNm);
-                }
-                catch (MissingInvalidNmdRngException ex)
-                {
+                    MissingInvalidNmdRngException ex = new MissingInvalidNmdRngException(RangeScope.Wkbk, iClkrNm);
                     throw ex;
                 }
             }
@@ -122,18 +117,16 @@ namespace iClickerQuizPts
         /// <exception cref="iClickerQuizPts.AppExceptions.MissingInvalidNmdRngException">
         /// Caught and rethrown when there are problems with the validity of a 
         /// worksheet-scoped named range.</exception>
-        public virtual void VerifyWshScopedNames()
+        public virtual void VerifyWshScopedNames(params string[] nms)
         {
-            for (int i = 0; i < _wshNmdRngs.Length; i++)
+            for (int i = 0; i < nms.Length; i++)
             {
                 string qzDataWshNm = Globals.Sheet1.Name; // ...since this is the only sheet holding named ranges
-                string iClikerNm = _wshNmdRngs[i];
-                try
+                string iClikerNm = nms[i];
+                if(!_nrMgr.WorksheetScopedRangeExists(qzDataWshNm, iClikerNm))
                 {
-                    _nrMgr.ConfirmWorksheetScopedRangeExists(qzDataWshNm, iClikerNm);
-                }
-                catch (MissingInvalidNmdRngException ex)
-                {
+                    MissingInvalidNmdRngException ex =
+                        new MissingInvalidNmdRngException(RangeScope.Wksheet, iClikerNm, qzDataWshNm);
                     throw ex;
                 }
             }

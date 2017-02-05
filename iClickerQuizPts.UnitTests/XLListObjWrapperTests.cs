@@ -15,7 +15,7 @@ using NSubstitute;
 
 namespace iClickerQuizPts.UnitTests
 {
-    public class GenericListObjMgr : ListObjectManager
+    public class GenericListObjMgr : XLListObjWrapper
     {
         public GenericListObjMgr(WshListobjPair pr) : base(pr)
         {
@@ -24,7 +24,7 @@ namespace iClickerQuizPts.UnitTests
 
     [TestFixture]
     [Category("ListObjectManagerTests")]
-    public class ListObjectManagerTests
+    public class XLListObjWrapperTests
     {
         const string QZ_GRADES_TBL = "tblClkrQuizGrades";
         const string QZ_GRADES_WSH = "iCLICKERQuizPoints";

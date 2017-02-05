@@ -19,7 +19,7 @@ namespace iClickerQuizPts.AppExceptions
     /// <para>This application has been built to extract the quiz dates from those
     /// column headers.  If this exception is thrown by the application it essentially 
     /// means that the column headers have been reformatted.  It will also mean that, 
-    /// at the very least, the <see cref="ExternalWbkHandler.GetDatePortionOfHeader(string)"/> 
+    /// at the very least, the <see cref="ExternalWbkWrapper.GetDatePortionOfHeader(string)"/> 
     /// method will need to be refactored.
     /// </para></remarks>
     [Serializable]

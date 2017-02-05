@@ -12,7 +12,7 @@ namespace iClickerQuizPts.ListObjMgmt
     /// <summary>
     /// Provides a mechanism for interacting with the workbook's <see cref="Excel.ListObjects"/>.
     /// </summary>
-    public abstract class ListObjectManager
+    public abstract class XLListObjWrapper
     {
         #region Fields
         #region PrivateFlds
@@ -54,11 +54,11 @@ namespace iClickerQuizPts.ListObjMgmt
         /// </summary>
         /// <remarks>
         /// Adding this property gives us a mechanism for ensuring that the 
-        /// <see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager.SetListObjAndParentWshPpts"/> 
+        /// <see cref="iClickerQuizPts.ListObjMgmt.XLListObjWrapper.SetListObjAndParentWshPpts"/> 
         /// method has been called prior to any other class method being called.  (Again, the 
         /// requirements of unit testing prevent us from calling the 
-        /// <see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager.SetListObjAndParentWshPpts"/> 
-        /// method from within the <see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager"/> 
+        /// <see cref="iClickerQuizPts.ListObjMgmt.XLListObjWrapper.SetListObjAndParentWshPpts"/> 
+        /// method from within the <see cref="iClickerQuizPts.ListObjMgmt.XLListObjWrapper"/> 
         /// constructor.
         /// </remarks>
         public virtual bool UnderlyingWshAndListObjVerified
@@ -71,7 +71,7 @@ namespace iClickerQuizPts.ListObjMgmt
         #region ctor
         /// <summary>
         /// Initializes a new instance of the 
-        /// class <see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager"/>.
+        /// class <see cref="iClickerQuizPts.ListObjMgmt.XLListObjWrapper"/>.
         /// </summary>
         /// <param name="wshTblNmzPair">The properties of this <see langword="struct"/> 
         /// should be populated with the name of the <see cref="Excel.ListObject"/> 
@@ -81,7 +81,7 @@ namespace iClickerQuizPts.ListObjMgmt
         /// or the the <see cref="iClickerQuizPts.WshListobjPair.ListObjName"/> property 
         /// has not been populated.  (In other words, <i>both</i> properties must contain non-empty, 
         /// non-null values.)</exception>
-        protected ListObjectManager(WshListobjPair wshTblNmzPair)
+        protected XLListObjWrapper(WshListobjPair wshTblNmzPair)
         {
             // Trap to ensure that constructor parameter has been populated with both
             // a wsh name and a ListObject name...
@@ -102,7 +102,7 @@ namespace iClickerQuizPts.ListObjMgmt
         /// Sets <list type="bullet">
         /// <item>parent <see cref="Excel.Worksheet"/> of <see cref="Excel.ListObject"/></item>
         /// <item><see cref="Excel.ListObject"/> itself</item>
-        /// <item><see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager.DoesListObjHaveData"/> property</item>
+        /// <item><see cref="iClickerQuizPts.ListObjMgmt.XLListObjWrapper.DoesListObjHaveData"/> property</item>
         /// </list>
         /// </summary>
         /// <exception cref="iClickerQuizPts.AppExceptions.MissingWorksheetException"> thrown when the 

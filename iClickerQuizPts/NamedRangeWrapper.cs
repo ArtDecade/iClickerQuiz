@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 using iClickerQuizPts.AppExceptions;
+using iClickerQuizPts.Itfs;
 using Excel = Microsoft.Office.Interop.Excel;
 
 namespace iClickerQuizPts
@@ -12,41 +13,8 @@ namespace iClickerQuizPts
     /// <summary>
     /// Provides a mechanism for verifying that named ranges still exist in workbook. 
     /// </summary>
-    public class NamedRangeManager
+    public class NamedRangeWrapper : INamedRangeManaging
     {
-        /// <summary>
-        /// Confirms that a workbook-scoped <see cref="Excel.Name"/> is valid.
-        /// </summary>
-        /// <param name="rngNm">The name of the <see cref="Excel.Name"/> being tested.</param>
-        /// <exception cref="iClickerQuizPts.AppExceptions.MissingInvalidNmdRngException">The name 
-        /// could not be found or it does not have a valid <see cref="Excel.Range"/> reference.</exception>
-        public void ConfirmWorkbookScopedRangeExists(string rngNm)
-        {
-            if(!WorkbookScopedRangeExists(rngNm))
-            {
-                MissingInvalidNmdRngException ex =
-                    new MissingInvalidNmdRngException(RangeScope.Wkbk, rngNm);
-                throw ex;
-            }
-        }
-
-        /// <summary>
-        /// Confirms that a worksheet-scoped <see cref="Excel.Name"/> is valid.
-        /// </summary>
-        /// <param name="wshNm">The name of the parent <see cref="Excel.Worksheet"/>.</param>
-        /// <param name="rngNm">The name of the <see cref="Excel.Name"/> being tested.</param>
-        /// <exception cref="iClickerQuizPts.AppExceptions.MissingInvalidNmdRngException">The name 
-        /// could not be found or it does not have a valid <see cref="Excel.Range"/> reference.</exception>
-        public void ConfirmWorksheetScopedRangeExists(string wshNm, string rngNm)
-        {
-            if(!WorksheetScopedRangeExists(wshNm, rngNm))
-            {
-                MissingInvalidNmdRngException ex =
-                    new MissingInvalidNmdRngException(RangeScope.Wksheet, rngNm, wshNm);
-                throw ex;
-            }
-        }
-
         /// <summary>
         /// Tests whether a specified workbook-scoped <see cref="Excel.Name"/> both exists 
         /// and refers to a valid <see cref="Excel.Range"/>.

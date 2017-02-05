@@ -7,7 +7,7 @@ using NUnit.Framework;
 namespace iClickerQuizPts.UnitTests
 {
     [TestFixture]
-    public class ExternalWbkHandlerTests
+    public class ExternalWbkWrapperTests
     {
         //[Category("ExternalWbkHandler")]
         //[TestCase("Session 40 Total 5/2/16 [2.00]", "5/2/16")]

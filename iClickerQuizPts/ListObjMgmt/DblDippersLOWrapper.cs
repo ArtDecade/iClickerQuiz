@@ -13,17 +13,17 @@ namespace iClickerQuizPts.ListObjMgmt
     /// of Double-Dippers (i.e., students who have taken multiple quizzes for a given
     /// course week.
     /// </summary>
-    public class DblDippersListObjMgr : ListObjectManager
+    public class DblDippersLOWrapper : XLListObjWrapper
     {
         /// <summary>
         /// Initializes a new instance of the 
-        /// class <see cref="iClickerQuizPts.ListObjMgmt.DblDippersListObjMgr"/>.
+        /// class <see cref="iClickerQuizPts.ListObjMgmt.DblDippersLOWrapper"/>.
         /// </summary>
         /// <param name="wshTblNmzPair">The properties of this <see langword="struct"/> 
         /// should be populated with the name of the <see cref="Excel.ListObject"/> 
         /// containing the double-dipping students and the name 
         /// of the parent <see cref="Excel.Worksheet"/>.</param>
-        public DblDippersListObjMgr(WshListobjPair wshTblNmzPair) : base(wshTblNmzPair)
+        public DblDippersLOWrapper(WshListobjPair wshTblNmzPair) : base(wshTblNmzPair)
         {
         }
     }

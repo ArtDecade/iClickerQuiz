@@ -20,7 +20,7 @@ namespace iClickerQuizPts
     /// Provides a mechanism for interacting with the iClicker-generated <see cref="Excel.Workbook"/> 
     /// containing the raw quiz data.
     /// </summary>
-    public class ExternalWbkHandler
+    public class ExternalWbkWrapper
     {
         #region fields
         private readonly byte _firstDateCol; // ...to be read from App.config file
@@ -29,9 +29,9 @@ namespace iClickerQuizPts
 
         #region Ctor
         /// <summary>
-        /// Instantiates a new instance of an <see cref="iClickerQuizPts.ExternalWbkHandler"/>.
+        /// Instantiates a new instance of an <see cref="iClickerQuizPts.ExternalWbkWrapper"/>.
         /// </summary>
-        public ExternalWbkHandler()
+        public ExternalWbkWrapper()
         {
             //AppSettingsReader ar = new AppSettingsReader();
             //try

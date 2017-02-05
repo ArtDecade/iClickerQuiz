@@ -110,18 +110,19 @@
     <Compile Include="AppExceptions\MissingWshException.cs" />
     <Compile Include="AppExceptions\InvalidQuizDataHeaderException.cs" />
     <Compile Include="EPPlusManager.cs" />
-    <Compile Include="ExternalWbkHandler.cs" />
+    <Compile Include="ExternalWbkWrapper.cs" />
     <Compile Include="FormCourseSemesterQuestionaire.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormCourseSemesterQuestionaire.Designer.cs">
       <DependentUpon>FormCourseSemesterQuestionaire.cs</DependentUpon>
     </Compile>
-    <Compile Include="ListObjMgmt\DblDippersListObjMgr.cs" />
-    <Compile Include="ListObjMgmt\ListObjectManager.cs" />
-    <Compile Include="ListObjMgmt\QuizDataListObjMgr.cs" />
+    <Compile Include="Itfs\INamedRangeManaging.cs" />
+    <Compile Include="ListObjMgmt\DblDippersLOWrapper.cs" />
+    <Compile Include="ListObjMgmt\XLListObjWrapper.cs" />
+    <Compile Include="ListObjMgmt\QuizDataLOWrapper.cs" />
     <Compile Include="MsgBoxGenerator.cs" />
-    <Compile Include="NamedRangeManager.cs" />
+    <Compile Include="NamedRangeWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QuizDataParser.cs" />
     <Compile Include="QuizUserControl.cs">

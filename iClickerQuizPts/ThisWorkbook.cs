@@ -114,6 +114,9 @@ namespace iClickerQuizPts
     public partial class ThisWorkbook
     {
         #region Fields
+        private string[] _wbkNmdRngs = { "ptrSemester", "ptrCourse" };
+        private string[] _wshNmdRngs =
+            { "rowSessionNmbr", "rowCourseWk", "rowSession", "rowTtlPts" };
         private QuizUserControl _ctrl = new QuizUserControl();
         private List<DateTime> _qDts = new List<DateTime>();
         private List<string> _sessionNos = new List<string>();
@@ -122,10 +125,8 @@ namespace iClickerQuizPts
 
         private ThisWorkbookWrapper _twbkWrapper;
 
-        private QuizDataListObjMgr _qdLOMgr;
-        private DblDippersListObjMgr _ddsLOMgr;
-
-        
+        private QuizDataLOWrapper _qdLOMgr;
+        private DblDippersLOWrapper _ddsLOMgr;
         #endregion
 
         #region Ppts
@@ -140,11 +141,11 @@ namespace iClickerQuizPts
         }
 
         /// <summary>
-        /// Gets a <see cref="iClickerQuizPts.ListObjMgmt.ListObjectManager"/>-derived class 
+        /// Gets a <see cref="iClickerQuizPts.ListObjMgmt.XLListObjWrapper"/>-derived class 
         /// which handles all interaction with the <see cref="Excel.ListObject"/> containing 
         /// all iClicker quiz grades.
         /// </summary>
-        public QuizDataListObjMgr QuizDataXLTblMgr
+        public QuizDataLOWrapper QuizDataXLTblMgr
         {
             get
             { return _qdLOMgr; }
@@ -189,7 +190,7 @@ namespace iClickerQuizPts
 
             try
             {
-                _twbkWrapper.VerifyWbkScopedNames();
+                _twbkWrapper.VerifyWbkScopedNames(_wbkNmdRngs);
             }
             catch (MissingInvalidNmdRngException ex)
             {

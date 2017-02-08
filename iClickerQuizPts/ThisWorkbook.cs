@@ -222,9 +222,9 @@ namespace iClickerQuizPts
             }
 
             _twbkWrapper.SetVirginWbkProperty();
-
             if (_twbkWrapper.IsVirginWbk)
                 _twbkWrapper.PromptUserForCourseNameAndSemester();
+
 
 
 

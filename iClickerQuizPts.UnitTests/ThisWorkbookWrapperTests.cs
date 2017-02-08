@@ -19,6 +19,8 @@ namespace iClickerQuizPts.UnitTests
         [TestCase("foo")]
         public void VerifyWbkScopedNames_InvalidNames_Throws(string nm)
         {
+            var wbw = Substitute.For<ThisWorkbookWrapper>();
+
             
         }
     }

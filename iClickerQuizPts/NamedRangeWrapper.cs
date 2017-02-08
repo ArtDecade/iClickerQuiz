@@ -13,7 +13,7 @@ namespace iClickerQuizPts
     /// <summary>
     /// Provides a mechanism for verifying that named ranges still exist in workbook. 
     /// </summary>
-    public class NamedRangeWrapper : INamedRangeManaging
+    public class NamedRangeWrapper : INamedRangeWrapping
     {
         /// <summary>
         /// Tests whether a specified workbook-scoped <see cref="Excel.Name"/> both exists 

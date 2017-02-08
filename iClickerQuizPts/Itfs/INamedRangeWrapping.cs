@@ -6,7 +6,7 @@ namespace iClickerQuizPts.Itfs
     /// Provides the interface for classes providing wrapper access to
     /// <see cref="Excel.Names"/>.
     /// </summary>
-    public interface INamedRangeManaging
+    public interface INamedRangeWrapping
     {
         /// <summary>
         /// Tests whether a specified workbook-scoped <see cref="Excel.Name"/> both exists 

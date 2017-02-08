@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Excel = Microsoft.Office.Interop.Excel;
+using Office = Microsoft.Office.Core;
+
 namespace iClickerQuizPts
 {
     /// <summary>
@@ -12,6 +15,7 @@ namespace iClickerQuizPts
     public static class UserControlsHandler
     {
         #region fields
+        private static string _wbkFullNm;
         private static byte _crsWk;
         private static WkSession _session = WkSession.None;
         #endregion
@@ -81,13 +85,60 @@ namespace iClickerQuizPts
         }
 
         /// <summary>
-        /// Fires all other methods required to import data from an Excel or *.csv file of 
+        /// Fires all other methods required to import data from an Excel file of 
         /// raw iClicker student test scores.
         /// </summary>
         public static void ImportDataMaestro()
         {
-            
+            string rawDataFileFullNm;
+            bool userSelectedFile;
+            userSelectedFile = PromptUserToOpenQuizDataWbk(out rawDataFileFullNm);
+            if(userSelectedFile)
+            {
+                EPPlusManager eppMgr = new EPPlusManager(rawDataFileFullNm);
+                eppMgr.CreateQuizScoresDataTable();
+                //TODO:  Fire GetEnumerableSessionNos
+
+            }
         }
+
+        /// <summary>
+        /// Prompts user to select the Excel containing latest iClick data.
+        /// </summary>
+        /// <param name="dataFileFullNm">An <code>out</code> parameter to 
+        /// capture the name of the selected file.</param>
+        /// <returns>
+        /// <see langword="true"/> if the user selected a file, otherwise
+        /// <see langword="false"/>.
+        /// </returns>
+        /// <remarks>
+        /// If the user does not select a file then the <code>dataFileFullNm</code> 
+        /// out parameter will be set to <see cref="string.Empty"/>.
+        /// </remarks>
+        private static bool PromptUserToOpenQuizDataWbk(out string dataFileFullNm)
+        {
+            dataFileFullNm = string.Empty; // ...in case user cxls
+            bool userSelectedWbk = new bool();
+
+            Office.FileDialog fd = Globals.ThisWorkbook.Application.get_FileDialog(
+                Office.MsoFileDialogType.msoFileDialogFilePicker);
+            fd.Title = "Latest iClick Results";
+            fd.AllowMultiSelect = false;
+            fd.Filters.Clear();
+            fd.Filters.Add("Excel Files", "*.xlsx");
+
+            // Handle user selection...
+            if (fd.Show() == -1) // ...-1 == file selected; 0 == user cxled
+            {
+                userSelectedWbk = true;
+                dataFileFullNm = fd.SelectedItems.Item(0);
+            }
+            return userSelectedWbk;
+        }
+
+
+
+
         #endregion
     }
 }

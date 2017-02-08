@@ -117,7 +117,7 @@
     <Compile Include="FormCourseSemesterQuestionaire.Designer.cs">
       <DependentUpon>FormCourseSemesterQuestionaire.cs</DependentUpon>
     </Compile>
-    <Compile Include="Itfs\INamedRangeManaging.cs" />
+    <Compile Include="Itfs\INamedRangeWrapping.cs" />
     <Compile Include="ListObjMgmt\DblDippersLOWrapper.cs" />
     <Compile Include="ListObjMgmt\XLListObjWrapper.cs" />
     <Compile Include="ListObjMgmt\QuizDataLOWrapper.cs" />
@@ -143,6 +143,7 @@
     <Compile Include="Sheet2.Designer.cs">
       <DependentUpon>Sheet2.Designer.xml</DependentUpon>
     </Compile>
+    <Compile Include="ThisWbkDataWrapper.cs" />
     <Compile Include="ThisWorkbook.cs">
       <DependentUpon>DLCiClickerQuizPoints_2016Summer.xlsx</DependentUpon>
     </Compile>

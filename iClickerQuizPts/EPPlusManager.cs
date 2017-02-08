@@ -94,7 +94,7 @@ namespace iClickerQuizPts
         /// An entry in the <code>appSettings</code> section in the <code>App.config</code> 
         /// file could not be found.
         /// </exception>
-        public void EPPlusManger(string wbkFullNm)
+        public EPPlusManager(string wbkFullNm)
         {
             if (wbkFullNm.EndsWith("xlsx"))
             {
@@ -103,7 +103,7 @@ namespace iClickerQuizPts
                 {
                     ReadAppConfigDataIntoFields();
                 }
-                catch(InalidAppConfigItemException ex)
+                catch (InalidAppConfigItemException ex)
                 {
                     throw ex;
                 }
@@ -199,6 +199,8 @@ namespace iClickerQuizPts
                 throw ex;
             }
         }
+
+
 
         /// <summary>
         /// Utilizes EPPlus to move all the data from the quiz data worksheet into a 
@@ -362,6 +364,9 @@ namespace iClickerQuizPts
                             col.ExtendedProperties["ComboBoxLbl"] =
                                 string.Format($"Session {sessionNo} - {sessionDt}");
                             _dt.Columns.Add(col);
+
+                            
+                            
                         }
                         catch
                         {
@@ -400,6 +405,16 @@ namespace iClickerQuizPts
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Converts the (private) <see cref="List{String}"/> of session numbers 
+        /// to an <see cref="IEnumerable{String}"/>.
+        /// </summary>
+        /// <returns>An enumberable collection of session numbers.</returns>
+        public IEnumerable<string> GetEnumerableSessionNos()
+        {
+            return _sessionNos.AsEnumerable<string>();
         }
         #endregion
     }

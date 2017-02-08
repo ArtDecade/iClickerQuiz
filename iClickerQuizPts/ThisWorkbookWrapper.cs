@@ -20,11 +20,9 @@ namespace iClickerQuizPts
         #region fields
         private bool _virginWbk;
         private byte _nmbNonScoreCols;
-        private QuizDataLOWrapper _qdLOMgr;
-        private DblDippersLOWrapper _ddsLOMgr;
-
-        private NamedRangeWrapper _nrMgr = new NamedRangeWrapper();
-        
+        private QuizDataLOWrapper _qdLOWrppr;
+        private DblDippersLOWrapper _ddsLOWrppr;
+        private NamedRangeWrapper _nrWrppr = new NamedRangeWrapper();
         #endregion
 
         #region ppts
@@ -56,7 +54,7 @@ namespace iClickerQuizPts
             // Instantiate quiz qata class...
             try
             {
-                _qdLOMgr = new QuizDataLOWrapper(quizDataLOInfo);
+                _qdLOWrppr = new QuizDataLOWrapper(quizDataLOInfo);
             }
             catch (ApplicationException ex)
             {
@@ -64,7 +62,7 @@ namespace iClickerQuizPts
             }
             try
             {
-                _qdLOMgr.SetListObjAndParentWshPpts();
+                _qdLOWrppr.SetListObjAndParentWshPpts();
             }
             catch (ApplicationException ex)
             {
@@ -74,7 +72,7 @@ namespace iClickerQuizPts
             // Instantiate double dippers class...
             try
             {
-                _ddsLOMgr = new DblDippersLOWrapper(dblDpprsLOInfo);
+                _ddsLOWrppr = new DblDippersLOWrapper(dblDpprsLOInfo);
             }
             catch (ApplicationException ex)
             {
@@ -82,7 +80,7 @@ namespace iClickerQuizPts
             }
             try
             {
-                _ddsLOMgr.SetListObjAndParentWshPpts();
+                _ddsLOWrppr.SetListObjAndParentWshPpts();
             }
             catch (ApplicationException ex)
             {
@@ -102,9 +100,10 @@ namespace iClickerQuizPts
             for (int i = 0; i < nms.Length; i++)
             {
                 string iClkrNm = nms[i];
-                if(!_nrMgr.WorkbookScopedRangeExists(iClkrNm))
+                if(!_nrWrppr.WorkbookScopedRangeExists(iClkrNm))
                 {
-                    MissingInvalidNmdRngException ex = new MissingInvalidNmdRngException(RangeScope.Wkbk, iClkrNm);
+                    MissingInvalidNmdRngException ex = 
+                        new MissingInvalidNmdRngException(RangeScope.Wkbk, iClkrNm);
                     throw ex;
                 }
             }
@@ -121,9 +120,10 @@ namespace iClickerQuizPts
         {
             for (int i = 0; i < nms.Length; i++)
             {
-                string qzDataWshNm = Globals.Sheet1.Name; // ...since this is the only sheet holding named ranges
+                // Since this is the only sheet holding named ranges...
+                string qzDataWshNm = Globals.Sheet1.Name; 
                 string iClikerNm = nms[i];
-                if(!_nrMgr.WorksheetScopedRangeExists(qzDataWshNm, iClikerNm))
+                if(!_nrWrppr.WorksheetScopedRangeExists(qzDataWshNm, iClikerNm))
                 {
                     MissingInvalidNmdRngException ex =
                         new MissingInvalidNmdRngException(RangeScope.Wksheet, iClikerNm, qzDataWshNm);
@@ -164,7 +164,7 @@ namespace iClickerQuizPts
         /// </remarks>
         public virtual void SetVirginWbkProperty()
         {
-            if (!_qdLOMgr.ListObjectHasData && !_ddsLOMgr.ListObjectHasData)
+            if (!_qdLOWrppr.ListObjectHasData && !_ddsLOWrppr.ListObjectHasData)
                 _virginWbk = true;
         }
 
@@ -184,7 +184,6 @@ namespace iClickerQuizPts
             FormCourseSemesterQuestionaire frm = new FormCourseSemesterQuestionaire();
             frm.ShowDialog();
         }
-
         #endregion
 
 

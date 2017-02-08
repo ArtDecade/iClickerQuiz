@@ -63,7 +63,7 @@ namespace iClickerQuizPts
             fd.Title = "Latest iClick Results";
             fd.AllowMultiSelect = false;
             fd.Filters.Clear();
-            fd.Filters.Add("Excel Files", "*.xlsx;*.xls");
+            fd.Filters.Add("Excel Files", "*.xlsx");
 
             // Handle user selection...
             if (fd.Show() == -1) // ...-1 == file opened; 0 == user cxled

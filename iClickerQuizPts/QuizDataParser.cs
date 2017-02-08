@@ -39,6 +39,8 @@ namespace iClickerQuizPts
 
                 // Now extract our values...
                 sessionNo = hdr.Substring(0, space1);
+                if (sessionNo.Length == 1)
+                    sessionNo = "0" + sessionNo; // ...add leading zero, if necessary
                 qzDate = hdr.Substring(space1 + 1, space2 - space1 - 1);
                 maxPts = hdr.Substring(space2 + 1);
             }

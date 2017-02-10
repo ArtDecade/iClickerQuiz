@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using Office = Microsoft.Office.Core;
 
@@ -18,6 +19,8 @@ namespace iClickerQuizPts
         private static string _wbkFullNm;
         private static byte _crsWk;
         private static WkSession _session = WkSession.None;
+        private static DataTable _dtSortedSsnsAll;
+        private static DataTable _dtSortedSsnsNew;
         #endregion
 
         #region Ppts
@@ -93,13 +96,20 @@ namespace iClickerQuizPts
             string rawDataFileFullNm;
             bool userSelectedFile;
             userSelectedFile = PromptUserToOpenQuizDataWbk(out rawDataFileFullNm);
-            if(userSelectedFile)
-            {
-                EPPlusManager eppMgr = new EPPlusManager(rawDataFileFullNm);
-                eppMgr.CreateQuizScoresDataTable();
-                //TODO:  Fire GetEnumerableSessionNos
+            if (!userSelectedFile)
+                return; 
+            // If here user selected a file...
+            EPPlusManager eppMgr = new EPPlusManager(rawDataFileFullNm);
+            eppMgr.CreateDataTables();
 
-            }
+            // Populate sorted data table of all Sessions...
+            DataView dv = eppMgr.SessionNmbrsDataTable.DefaultView;
+            dv.Sort = "SessionNo ASC";
+            _dtSortedSsnsAll = dv.ToTable();
+
+           
+
+
         }
 
         /// <summary>
@@ -135,6 +145,10 @@ namespace iClickerQuizPts
             }
             return userSelectedWbk;
         }
+
+        
+
+
 
 
 

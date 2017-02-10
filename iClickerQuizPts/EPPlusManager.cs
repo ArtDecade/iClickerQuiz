@@ -53,8 +53,8 @@ namespace iClickerQuizPts
         private string _colNmEmail;
         private string _colNmFirstNm;
         private string _colNmLastNm;
-        private List<string> _sessionNos = new List<string>();
-        private DataTable _dt;
+        private DataTable _dtAllScores;
+        private DataTable _dtSessions;
         private QuizDataParser _hdrParser = new QuizDataParser();
         #endregion
 
@@ -66,17 +66,17 @@ namespace iClickerQuizPts
         public DataTable RawQuizScoresDataTable
         {
             get
-            { return _dt; }
+            { return _dtAllScores; }
         }
 
         /// <summary>
-        /// Gets a <see cref="System.Collections.Generic.List{T}"/> of session numbers 
-        /// in the raw iClicker data file.
+        /// Gets the <see cref="System.Data.DataTable"/> holding the session number info 
+        /// from the raw iClicker data file.
         /// </summary>
-        public List<string> SessionNos
+        public DataTable SessionNmbrsDataTable
         {
             get
-            { return _sessionNos; }
+            { return _dtSessions; }
         }
         #endregion
 
@@ -200,11 +200,10 @@ namespace iClickerQuizPts
             }
         }
 
-
-
         /// <summary>
-        /// Utilizes EPPlus to move all the data from the quiz data worksheet into a 
-        /// <see cref="System.Data.DataTable"/>.  
+        /// Utilizes EPPlus to create two <see cref="System.Data.DataTable"/>s.  One 
+        /// comprises all the data from the quiz data worksheet, the other comprises 
+        /// Session number information.
         /// <exception cref="iClickerQuizPts.AppExceptions.ReadingExternalWbkException">
         /// There are any number of problems with the format and/or 
         /// structure of the workbook and/or the worksheet containing the quiz
@@ -220,9 +219,10 @@ namespace iClickerQuizPts
         /// </list>
         /// </exception>
         /// </summary>
-        public virtual void CreateQuizScoresDataTable()
+        public virtual void CreateDataTables()
         {
-            _dt = new DataTable("RawQuizDataTable");
+            _dtAllScores = new DataTable("RawQuizData");
+            _dtSessions = new DataTable("SessionHdrs");
             string sessionNo;
             string sessionDt;
             string maxPts;
@@ -306,47 +306,70 @@ namespace iClickerQuizPts
 
                     /*
                      * 
-                     * CREATE COLUMNS & ADD TO DATATABLE...
+                     * CREATE COLUMNS & ADD TO DATATABLES...
                      * 
                      */
                     // Create a primary key column...
-                    DataColumn colID = new DataColumn(_colNmID, typeof(int));
-                    colID.AllowDBNull = false;
-                    colID.AutoIncrement = true;
-                    colID.ReadOnly = true;
-                    colID.Unique = true;
-                    _dt.Columns.Add(colID);
+                    DataColumn colDataID = new DataColumn(_colNmID, typeof(int));
+                    colDataID.AllowDBNull = false;
+                    colDataID.AutoIncrement = true;
+                    colDataID.ReadOnly = true;
+                    colDataID.Unique = true;
+                    _dtAllScores.Columns.Add(colDataID);
 
                     // Create Student ID (email) column...
-                    DataColumn stID = new DataColumn(_colNmEmail, typeof(string));
-                    stID.AllowDBNull = false;
-                    stID.ReadOnly = true;
-                    stID.Unique = true;
-                    _dt.Columns.Add(stID);
+                    DataColumn colStEml = new DataColumn(_colNmEmail, typeof(string));
+                    colStEml.AllowDBNull = false;
+                    colStEml.ReadOnly = true;
+                    colStEml.Unique = true;
+                    _dtAllScores.Columns.Add(colStEml);
 
                     // Create student Last Name column...
-                    DataColumn ln = new DataColumn(_colNmLastNm, typeof(string));
-                    ln.AllowDBNull = false;
-                    _dt.Columns.Add(ln);
+                    DataColumn colLn = new DataColumn(_colNmLastNm, typeof(string));
+                    colLn.AllowDBNull = false;
+                    _dtAllScores.Columns.Add(colLn);
 
-                    // Create & add student Firt Name column...
-                    DataColumn fn = new DataColumn(_colNmFirstNm, typeof(string));
-                    _dt.Columns.Add(fn);
+                    // Create & add student First Name column...
+                    DataColumn colFn = new DataColumn(_colNmFirstNm, typeof(string));
+                    _dtAllScores.Columns.Add(colFn);
+
+                    // Create & add Session column...
+                    DataColumn colSessNo = new DataColumn("SessionNo", typeof(string));
+                    colSessNo.AllowDBNull = false;
+                    colSessNo.Unique = true;
+                    _dtSessions.Columns.Add(colSessNo);
+
+                    // Create & add ComboBox column...
+                    DataColumn colComboBoxEntry = new DataColumn("ComboBoxEntry", typeof(string));
+                    _dtSessions.Columns.Add(colComboBoxEntry);
+
+                    // Create & add ColHdr column...
+                    DataColumn colDataHdr = new DataColumn("ColHdr", typeof(string));
+                    _dtSessions.Columns.Add(colDataHdr);
 
                     // Create & add columns for quiz data...
                     for (int i = _firstDataCol; i <= _lastCol; i++)
                     {
-                        string colHdr = ws.Cells[1, i].Value.ToString().Trim();
-                        DataColumn col = new DataColumn(colHdr, typeof(byte));
+                        string rawColHdr = ws.Cells[1, i].Value.ToString().Trim();
+                        DataColumn col = new DataColumn(rawColHdr, typeof(byte));
                         try
                         {
-                            _hdrParser.ExtractSessionDataFromColumnHeader(colHdr,
+                            _hdrParser.ExtractSessionDataFromColumnHeader(rawColHdr,
                                 out sessionNo, out sessionDt, out maxPts);
 
-                            // Populate the List<T> off session numbers, trapping 
-                            // for duplicates...
-                            if(!_sessionNos.Contains(sessionNo))
-                                _sessionNos.Add(sessionNo);
+                            // Add row to Session Nmbrs data table, trapping for dupe entries...
+                            var sNos = from s in _dtSessions.AsEnumerable()
+                                      where s.Field<string>("SessionNo") == sessionNo
+                                      select s;
+                            if (sNos.Count() == 0)
+                            {
+                                DataRow r = _dtSessions.NewRow();
+                                r["SessionNo"] = sessionNo;
+                                r["ComboBoxEntry"] = 
+                                    string.Format($"Session {sessionNo} - {sessionDt}");
+                                r["ColHdr"] = string.Format($"Session {sessionNo}");
+                                _dtSessions.Rows.Add(r);
+                            }
                             else
                             {
                                 string msg = 
@@ -363,15 +386,12 @@ namespace iClickerQuizPts
                             col.ExtendedProperties["MaxQuizPts"] = maxPts;
                             col.ExtendedProperties["ComboBoxLbl"] =
                                 string.Format($"Session {sessionNo} - {sessionDt}");
-                            _dt.Columns.Add(col);
-
-                            
-                            
+                            _dtAllScores.Columns.Add(col);
                         }
                         catch
                         {
                             InvalidQuizDataHeaderException ex = new InvalidQuizDataHeaderException();
-                            ex.HeaderText = colHdr;
+                            ex.HeaderText = rawColHdr;
                             throw ex;
                         }
                     }
@@ -387,7 +407,7 @@ namespace iClickerQuizPts
                     // Loop through each data row...
                     for (int rowNo = 2; rowNo <= _lastRow; rowNo++)
                     {
-                        DataRow r = _dt.NewRow();
+                        DataRow r = _dtAllScores.NewRow();
                         // Populate student name & email fields...
                         r[_colNmEmail] = ws.Cells[rowNo, _studentEmailCol].Value.ToString().Trim();
                         studentFullNm = ws.Cells[rowNo, _studentNameCol].Value.ToString();
@@ -401,20 +421,10 @@ namespace iClickerQuizPts
                             string colNm = ws.Cells[1, colNo].Value.ToString().Trim();
                             r[colNm] = ws.Cells[rowNo, colNo].Value;
                         }
-                        _dt.Rows.Add(r); // ...add row to dataTable
+                        _dtAllScores.Rows.Add(r); // ...add row to dataTable
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Converts the (private) <see cref="List{String}"/> of session numbers 
-        /// to an <see cref="IEnumerable{String}"/>.
-        /// </summary>
-        /// <returns>An enumberable collection of session numbers.</returns>
-        public IEnumerable<string> GetEnumerableSessionNos()
-        {
-            return _sessionNos.AsEnumerable<string>();
         }
         #endregion
     }

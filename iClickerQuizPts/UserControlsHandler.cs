@@ -21,6 +21,7 @@ namespace iClickerQuizPts
         private static WkSession _session = WkSession.None;
         private static DataTable _dtSortedSsnsAll;
         private static DataTable _dtSortedSsnsNew;
+        private static EPPlusManager _eppMgr;
         #endregion
 
         #region Ppts
@@ -97,15 +98,28 @@ namespace iClickerQuizPts
             bool userSelectedFile;
             userSelectedFile = PromptUserToOpenQuizDataWbk(out rawDataFileFullNm);
             if (!userSelectedFile)
-                return; 
+                return;
             // If here user selected a file...
-            EPPlusManager eppMgr = new EPPlusManager(rawDataFileFullNm);
-            eppMgr.CreateDataTables();
+            _eppMgr = new EPPlusManager(rawDataFileFullNm);
+            _eppMgr.CreateDataTables();
 
             // Populate sorted data table of all Sessions...
-            DataView dv = eppMgr.SessionNmbrsDataTable.DefaultView;
-            dv.Sort = "SessionNo ASC";
-            _dtSortedSsnsAll = dv.ToTable();
+            DataView dvSessNos = _eppMgr.SessionNmbrsDataTable.DefaultView;
+            dvSessNos.Sort = "SessionNo ASC";
+            _dtSortedSsnsAll = dvSessNos.ToTable();
+
+            // Populate sorted data table of new Sessions...
+            ThisWbkDataWrapper wrpr = new ThisWbkDataWrapper();
+            var newSessns = (from alls in _dtSortedSsnsAll.AsEnumerable()
+                             select alls).
+                             Except(
+                            from tws in wrpr.SessionNmbrs.AsEnumerable()
+                                                 select tws);
+
+                        
+            //.Except(wrpr.SessionNmbrs);
+            
+
 
            
 

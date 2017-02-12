@@ -309,6 +309,8 @@ namespace iClickerQuizPts
                      * CREATE COLUMNS & ADD TO DATATABLES...
                      * 
                      */
+
+                    // ALL SCORES DATA TABLE:
                     // Create a primary key column...
                     DataColumn colDataID = new DataColumn(_colNmID, typeof(int));
                     colDataID.AllowDBNull = false;
@@ -333,6 +335,8 @@ namespace iClickerQuizPts
                     DataColumn colFn = new DataColumn(_colNmFirstNm, typeof(string));
                     _dtAllScores.Columns.Add(colFn);
 
+
+                    // SESSION NOS DATA TABLE:
                     // Create & add Session column...
                     DataColumn colSessNo = new DataColumn("SessionNo", typeof(string));
                     colSessNo.AllowDBNull = false;

@@ -201,7 +201,9 @@ namespace iClickerQuizPts
 
             try
             {
-                _twbkWrapper.VerifyWshScopedNames();
+                string[] wshXLNms = {"rowCourseWkNmbr", "rowSessionEnum",
+                    "rowSessionNmbr", "rowTtlQuizPts"};
+                _twbkWrapper.VerifyWshScopedNames(wshXLNms);
             }
             catch (MissingInvalidNmdRngException ex)
             {

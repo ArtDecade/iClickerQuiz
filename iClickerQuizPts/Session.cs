@@ -90,20 +90,27 @@ namespace iClickerQuizPts
             /// Which session within the course week.
             /// </summary>
             public WkSession WeeklySession { get; set; }
-            #endregion
+        #endregion
         #endregion
 
         #region ctors
         /// <summary>
         /// Instantiates an instance of a <see cref="iClickerQuizPts.Session"/>.
         /// </summary>
-        /// <param name="rawFileHeader">
-        /// The column header from a raw iClicer data file.
-        /// </param>
+        /// <param name="rawFileHeader">The column header from a raw iClicer data file.</param>
+        /// <exception cref="iClickerQuizPts.AppExceptions.InvalidQuizDataHeaderException">The header 
+        /// text from the raw data file is not in the expected format.</exception>
         public Session(string rawFileHeader)
         {
-            ExtractSessionDataFromColumnHeader(rawFileHeader, 
-                out _nmbr, out _date, out _maxPts);
+            try
+            {
+                ExtractSessionDataFromColumnHeader(rawFileHeader,
+                    out _nmbr, out _date, out _maxPts);
+            }
+            catch (InvalidQuizDataHeaderException ex)
+            {
+                throw ex;
+            }
             // If necessary add a leading zero to the Session number...
             if (_nmbr.Length == 1)
                 _nmbr =  string.Format($"0{_nmbr}");
@@ -129,6 +136,7 @@ namespace iClickerQuizPts
         #endregion
 
         #region methods
+        #region private
         /// <summary>
         /// Obtains the session number, quiz date, and maximum points
         /// from a raw data file data column header.
@@ -137,12 +145,14 @@ namespace iClickerQuizPts
         /// <param name="sessionNo">An out parameter to capture the session number.</param>
         /// <param name="qzDate">An out parameter to capture the date of the quiz.</param>
         /// <param name="maxPts">An out parameter to capture the maximum points for the quiz.</param>
+        /// <exception cref="iClickerQuizPts.AppExceptions.InvalidQuizDataHeaderException">The header 
+        /// text from the raw data file is not in the expected format.</exception>
         private void ExtractSessionDataFromColumnHeader(string hdr,
             out string sessionNo, out DateTime qzDate, out byte maxPts)
         {
             try
             {
-                hdr = hdr.Remove(1, "Session".Length + 1);
+                hdr = hdr.Replace("Session ",string.Empty);
                 hdr = hdr.Replace("Total ", string.Empty);
                 // (char)91 = opening bracket (i.e., "[")...
                 hdr = hdr.Replace(((char)91).ToString(), string.Empty);
@@ -150,8 +160,11 @@ namespace iClickerQuizPts
                 hdr = hdr.Replace(((char)93).ToString(), string.Empty);
                 hdr = hdr.Trim();
                 // Hdr will now be something like:  "40 5/2/16 2.00"...
-                int posSpace1 = hdr.IndexOf((char)34, 1); // ...(char)34 = space (i.e., " ")
-                int posSpace2 = hdr.IndexOf((char)34, posSpace1 + 1);
+                int perSpace = hdr.IndexOf((char)46); // ...(char)46 = period (i.e., ".")
+                hdr = hdr.Substring(0, perSpace); // ...remove trailing decimals
+
+                int posSpace1 = hdr.IndexOf((char)32, 1); // ...(char)32 = space (i.e., " ")
+                int posSpace2 = hdr.IndexOf((char)32, posSpace1 + 1);
 
                 // Now extract our values...
                 sessionNo = hdr.Substring(0, posSpace1);
@@ -160,13 +173,169 @@ namespace iClickerQuizPts
                 qzDate = DateTime.Parse( hdr.Substring(posSpace1 + 1, posSpace2 - posSpace1 - 1));
                 maxPts = Byte.Parse(hdr.Substring(posSpace2 + 1));
             }
-            catch (InvalidQuizDataHeaderException e)
+            catch (Exception e)
             {
-                e.HeaderText = hdr;
-                throw e;
+                InvalidQuizDataHeaderException ex =
+                    new InvalidQuizDataHeaderException(
+                        "Failure in ExtractSessionDataFromColumnHeader method.", e);
+                ex.HeaderText = hdr;
+                throw ex;
             }
         }
         #endregion
 
+        #region public
+        /// <summary>
+        /// Returns a string that represents the current <see cref="iClickerQuizPts.Session"/> object.
+        /// </summary>
+        /// <returns>A string that represents the state of the current <see cref="iClickerQuizPts.Session"/>.</returns>
+        public override string ToString()
+        {
+            string ms1 = 
+                string.Format($"[SessionNo: {SessionNo}; QuizDate: {QuizDate.ToShortDateString()}; ");
+            string ms2 = 
+                string.Format($"MaxPts: {MaxPts}; ComboBoxText: {ComboBoxText}; ColHeaderText: {ColHeaderText}; ");
+            string ms3 =
+                string.Format($"CourseWeek: {CourseWeek}; WeeklySession: {WeeklySession.ToString()}");
+
+            string myState = ms1 + ms2 + ms3;
+            return myState;
+        }
+
+        /// <summary>
+        /// Returns a has code for the current <see cref="iClickerQuizPts.Session"/> object.
+        /// </summary>
+        /// <returns>A hash code for the current <see cref="iClickerQuizPts.Session"/>.</returns>
+        public override int GetHashCode()
+        {
+            return this.ToString().GetHashCode();
+        }
+
+        /// <summary>
+        /// Determines whether the specified object is equal to the current 
+        /// <see cref="iClickerQuizPts.Session"/> object.
+        /// </summary>
+        /// <param name="obj">The object to compare with the current 
+        /// <see cref="iClickerQuizPts.Session"/></param>
+        /// <returns><see langword="true"/> if the specified object is equal to the current 
+        /// <see cref="iClickerQuizPts.Session"/>; otherwise <see langword="false"/>.</returns>
+        /// <remarks>The only determinent for whether two <see cref="iClickerQuizPts.Session"/> objects 
+        /// are equal is whether they have the same value for their respective <code>SessionNo</code> 
+        /// properties.  Values for all other properties are ignored.  </remarks>
+        public override bool Equals(object obj)
+        {
+            if (obj is Session && obj != null)
+            {
+                Session temp;
+                temp = (Session)obj;
+                if (temp.SessionNo == this.SessionNo)
+                    return true;
+                else
+                    return false; 
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Determines whether two <see cref="iClickerQuizPts.Session"/> objects 
+        /// have the same value for their <code>SessionNo</code> properties.
+        /// </summary>
+        /// <param name="s1">The first <see cref="iClickerQuizPts.Session"/> object being compared.</param>
+        /// <param name="s2">The second <see cref="iClickerQuizPts.Session"/> object being compared.</param>
+        /// <returns>
+        /// <see langword="true"/> if the values for the <code>SessionNo</code> property are the same for the 
+        /// two <see cref="iClickerQuizPts.Session"/> objects; otherwise <see langword="false"/>.
+        /// </returns>
+        public static bool operator == (Session s1, Session s2)
+        {
+            return s1.Equals(s2);
+        }
+
+        /// <summary>
+        /// Determines whether two <see cref="iClickerQuizPts.Session"/> objects 
+        /// have different values for their <code>SessionNo</code> properties.
+        /// </summary>
+        /// <param name="s1">The first <see cref="iClickerQuizPts.Session"/> object being compared.</param>
+        /// <param name="s2">The second <see cref="iClickerQuizPts.Session"/> object being compared.</param>
+        /// <returns><see langword="true"/> if the values for the <code>SessionNo</code> property differ for the 
+        /// two <see cref="iClickerQuizPts.Session"/> objects; otherwise <see langword="false"/>.</returns>
+        public static bool operator != (Session s1, Session s2)
+        {
+            return !s1.Equals(s2);
+        }
+
+        /// <summary>
+        /// Determines whether the value for the <code>SessionNo</code> property of one <see cref="iClickerQuizPts.Session"/> 
+        /// object is less than the value for the <code>SessionNo</code> property of a second 
+        /// <see cref="iClickerQuizPts.Session"/> object.
+        /// </summary>
+        /// <param name="s1">The first <see cref="iClickerQuizPts.Session"/> object being compared.</param>
+        /// <param name="s2">The second <see cref="iClickerQuizPts.Session"/> object being compared.</param>
+        /// <returns><see langword="true"/> if the value for the <code>SessionNo</code> property of the first 
+        /// <see cref="iClickerQuizPts.Session"/> objects is less than the value of that same property 
+        /// of a second <see cref="iClickerQuizPts.Session"/> object; otherwise <see langword="false"/>.</returns>
+        public static bool operator < (Session s1, Session s2)
+        {
+            if (byte.Parse(s1.SessionNo) < byte.Parse(s2.SessionNo))
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Determines whether the value for the <code>SessionNo</code> property of one <see cref="iClickerQuizPts.Session"/> 
+        /// object is greater than the value for the <code>SessionNo</code> property of a second 
+        /// <see cref="iClickerQuizPts.Session"/> object.
+        /// </summary>
+        /// <param name="s1">The first <see cref="iClickerQuizPts.Session"/> object being compared.</param>
+        /// <param name="s2">The second <see cref="iClickerQuizPts.Session"/> object being compared.</param>
+        /// <returns><see langword="true"/> if the value for the <code>SessionNo</code> property of the first 
+        /// <see cref="iClickerQuizPts.Session"/> objects is greater than the value of that same property 
+        /// of a second <see cref="iClickerQuizPts.Session"/> object; otherwise <see langword="false"/>.</returns>
+        public static bool operator > (Session s1, Session s2)
+        {
+            if (byte.Parse(s1.SessionNo) > byte.Parse(s2.SessionNo))
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Determines whether the value for the <code>SessionNo</code> property of one <see cref="iClickerQuizPts.Session"/> 
+        /// object is less than or equal to the value for the <code>SessionNo</code> property of a second 
+        /// <see cref="iClickerQuizPts.Session"/> object.
+        /// </summary>
+        /// <param name="s1">The first <see cref="iClickerQuizPts.Session"/> object being compared.</param>
+        /// <param name="s2">The second <see cref="iClickerQuizPts.Session"/> object being compared.</param>
+        /// <returns><see langword="true"/> if the value for the <code>SessionNo</code> property of the first 
+        /// <see cref="iClickerQuizPts.Session"/> objects is less than or equal to the value of that same property 
+        /// of a second <see cref="iClickerQuizPts.Session"/> object; otherwise <see langword="false"/>.</returns>
+        public static bool operator <= (Session s1, Session s2)
+        {
+            if (byte.Parse(s1.SessionNo) <= byte.Parse(s2.SessionNo))
+                return true;
+            else
+                return false;
+        }
+
+        /// <summary>
+        /// Determines whether the value for the <code>SessionNo</code> property of one <see cref="iClickerQuizPts.Session"/> 
+        /// object is greater than or equal to the value for the <code>SessionNo</code> property of a second 
+        /// <see cref="iClickerQuizPts.Session"/> object.
+        /// </summary>
+        /// <param name="s1">The first <see cref="iClickerQuizPts.Session"/> object being compared.</param>
+        /// <param name="s2">The second <see cref="iClickerQuizPts.Session"/> object being compared.</param>
+        /// <returns><see langword="true"/> if the value for the <code>SessionNo</code> property of the first 
+        /// <see cref="iClickerQuizPts.Session"/> objects is greater than or equal to the value of that same property 
+        /// of a second <see cref="iClickerQuizPts.Session"/> object; otherwise <see langword="false"/>.</returns>
+        public static bool operator >= (Session s1, Session s2)
+        {
+            if (byte.Parse(s1.SessionNo) >= byte.Parse(s2.SessionNo))
+                return true;
+            else
+                return false;
+        }
+        #endregion
+        #endregion
     }
 }

@@ -155,5 +155,18 @@ namespace iClickerQuizPts
 
             _msg = string.Format($"{S1}\n\n\t{acKey}\n\n{CANNOT_CONTINUE}");
         }
+
+        /// <summary>
+        /// Sets the caption and builds the message that will be presented to the user whenever 
+        /// a <see cref="iClickerQuizPts.AppExceptions.InvalidQuizDataHeaderException"/> is thrown.
+        /// </summary>
+        /// <param name="colHdr">The column header which cannot be processed.</param>
+        public static void SetInvalidHdrMsg(string colHdr)
+        {
+            _caption = "Corrupt Data File";
+
+            _msg = string.Format("We cannot process the following column header:\n\n\t{colhdr}");
+
+        }
     }
 }

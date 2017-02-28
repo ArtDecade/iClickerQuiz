@@ -21,7 +21,7 @@ namespace iClickerQuizPts
         private static WkSession _session = WkSession.None;
         private static DataTable _dtSortedSsnsAll;
         private static DataTable _dtSortedSsnsNew;
-        private static EPPlusManager _eppMgr;
+        private static EPPlusManagerOrig _eppMgr;
         #endregion
 
         #region Ppts
@@ -100,7 +100,7 @@ namespace iClickerQuizPts
             if (!userSelectedFile)
                 return;
             // If here user selected a file...
-            _eppMgr = new EPPlusManager(rawDataFileFullNm);
+            _eppMgr = new EPPlusManagerOrig(rawDataFileFullNm);
             _eppMgr.CreateDataTables();
 
             // Populate sorted data table of all Sessions...

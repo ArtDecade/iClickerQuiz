@@ -110,6 +110,7 @@
     <Compile Include="AppExceptions\MissingWshException.cs" />
     <Compile Include="AppExceptions\InvalidQuizDataHeaderException.cs" />
     <Compile Include="EPPlusManager.cs" />
+    <Compile Include="EPPlusManagerOrig.cs" />
     <Compile Include="ExternalWbkWrapper.cs" />
     <Compile Include="FormCourseSemesterQuestionaire.cs">
       <SubType>Form</SubType>

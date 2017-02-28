@@ -17,7 +17,7 @@ namespace iClickerQuizPts
     /// Specifies constants defining the results of attempting to open an
     /// Excel file using EPPlus.
     /// </summary>
-    public enum ImportResult
+    public enum ImportResultOrig
     {
         /// <summary>
         /// File opened successfully.
@@ -41,7 +41,7 @@ namespace iClickerQuizPts
     /// Provides a mechanism for utilizing EPPlus to extract data from the 
     /// Excel file containing the raw iClicker quiz points data.
     /// </summary>
-    public class EPPlusManager
+    public class EPPlusManagerOrig
     {
         #region fields
         private byte _studentEmailCol;
@@ -55,6 +55,7 @@ namespace iClickerQuizPts
         private string _colNmFirstNm;
         private string _colNmLastNm;
         private DataTable _dtAllScores;
+        private DataTable _dtSessions;
         private QuizDataParser _hdrParser = new QuizDataParser();
         private BindingList<Session> _blistSssnsAll = new BindingList<Session>();
         #endregion
@@ -71,6 +72,16 @@ namespace iClickerQuizPts
         }
 
         /// <summary>
+        /// Gets the <see cref="System.Data.DataTable"/> holding the session number info 
+        /// from the raw iClicker data file.
+        /// </summary>
+        public DataTable SessionNmbrsDataTable
+        {
+            get
+            { return _dtSessions; }
+        }
+
+        /// <summary>
         /// Gets the <see cref="System.ComponentModel.BindingList{Session}"/> containing
         /// all Sessions in the raw iClicker data file.
         /// </summary>
@@ -83,7 +94,7 @@ namespace iClickerQuizPts
 
         #region ctor
         /// <summary>
-        /// Creates an instance of the <see cref="iClickerQuizPts.EPPlusManager"/>
+        /// Creates an instance of the <see cref="iClickerQuizPts.EPPlusManagerOrig"/>
         /// class
         /// </summary>
         /// <param name="wbkFullNm">The full name (i.e., including path) of the
@@ -95,7 +106,7 @@ namespace iClickerQuizPts
         /// An entry in the <code>appSettings</code> section in the <code>App.config</code> 
         /// file could not be found.
         /// </exception>
-        public EPPlusManager(string wbkFullNm)
+        public EPPlusManagerOrig(string wbkFullNm)
         {
             if (wbkFullNm.EndsWith("xlsx"))
             {
@@ -112,7 +123,7 @@ namespace iClickerQuizPts
             else
             {
                 ReadingExternalWbkException ex = new ReadingExternalWbkException();
-                ex.ImportResult = ImportResult.NotExcel;
+                ex.ImportResult = ImportResultOrig.NotExcel;
                 throw ex;
             }
         }
@@ -147,7 +158,7 @@ namespace iClickerQuizPts
             try
             {
                 _firstDataCol = (byte)ar.GetValue("ColNoDataBeginsXL", typeof(byte));
-
+               
             }
             catch
             {
@@ -223,6 +234,7 @@ namespace iClickerQuizPts
         public virtual void CreateDataTables()
         {
             _dtAllScores = new DataTable("RawQuizData");
+            _dtSessions = new DataTable("SessionHdrs");
             string sessionNo;
             string sessionDt;
             string maxPts;
@@ -244,7 +256,7 @@ namespace iClickerQuizPts
                     {
                         ReadingExternalWbkException ex =
                             new ReadingExternalWbkException("No worksheets in the workbook.");
-                        ex.ImportResult = ImportResult.WrongFormat;
+                        ex.ImportResult = ImportResultOrig.WrongFormat;
                         throw ex;
                     }
 
@@ -255,7 +267,7 @@ namespace iClickerQuizPts
                         string msg = "Incorrect column headings for columns A, B, and/or C";
                         ReadingExternalWbkException ex =
                             new ReadingExternalWbkException(msg);
-                        ex.ImportResult = ImportResult.WrongFormat;
+                        ex.ImportResult = ImportResultOrig.WrongFormat;
                         throw ex;
                     }
 
@@ -280,7 +292,7 @@ namespace iClickerQuizPts
                     {
                         string msg = "There are no columns of quiz data.";
                         ReadingExternalWbkException ex = new ReadingExternalWbkException(msg);
-                        ex.ImportResult = ImportResult.WrongFormat;
+                        ex.ImportResult = ImportResultOrig.WrongFormat;
                         throw ex;
                     }
 
@@ -299,7 +311,7 @@ namespace iClickerQuizPts
                     {
                         string msg = "There are no rows of data.";
                         ReadingExternalWbkException ex = new ReadingExternalWbkException(msg);
-                        ex.ImportResult = ImportResult.WrongFormat;
+                        ex.ImportResult = ImportResultOrig.WrongFormat;
                         throw ex;
                     }
 
@@ -335,6 +347,22 @@ namespace iClickerQuizPts
                     DataColumn colFn = new DataColumn(_colNmFirstNm, typeof(string));
                     _dtAllScores.Columns.Add(colFn);
 
+
+                    // SESSION NOS DATA TABLE:
+                    // Create & add Session column...
+                    DataColumn colSessNo = new DataColumn("SessionNo", typeof(string));
+                    colSessNo.AllowDBNull = false;
+                    colSessNo.Unique = true;
+                    _dtSessions.Columns.Add(colSessNo);
+
+                    // Create & add ComboBox column...
+                    DataColumn colComboBoxEntry = new DataColumn("ComboBoxEntry", typeof(string));
+                    _dtSessions.Columns.Add(colComboBoxEntry);
+
+                    // Create & add ColHdr column...
+                    DataColumn colDataHdr = new DataColumn("ColHdr", typeof(string));
+                    _dtSessions.Columns.Add(colDataHdr);
+
                     // Create & add columns for quiz data...
                     for (int i = _firstDataCol; i <= _lastCol; i++)
                     {
@@ -342,25 +370,38 @@ namespace iClickerQuizPts
                         DataColumn col = new DataColumn(rawColHdr, typeof(byte));
                         try
                         {
-                            Session s = new Session(rawColHdr);
-                            if (!_blistSssnsAll.Contains(s))
-                                _blistSssnsAll.Add(s);
-                            else // ...dupe entries
+                            _hdrParser.ExtractSessionDataFromColumnHeader(rawColHdr,
+                                out sessionNo, out sessionDt, out maxPts);
+
+                            // Add row to Session Nmbrs data table, trapping for dupe entries...
+                            var sNos = from s in _dtSessions.AsEnumerable()
+                                      where s.Field<string>("SessionNo") == sessionNo
+                                      select s;
+                            if (sNos.Count() == 0)
                             {
-                                string msg =
-                                    string.Format($"Multiple instances of Session {s.SessionNo} are in {_wbkFullNm}.");
+                                DataRow r = _dtSessions.NewRow();
+                                r["SessionNo"] = sessionNo;
+                                r["ComboBoxEntry"] = 
+                                    string.Format($"Session {sessionNo} - {sessionDt}");
+                                r["ColHdr"] = string.Format($"Session {sessionNo}");
+                                _dtSessions.Rows.Add(r);
+                            }
+                            else
+                            {
+                                string msg = 
+                                    string.Format($"Multiple instances of Session {sessionNo} are in {_wbkFullNm}.");
                                 ReadingExternalWbkException ex =
                                     new ReadingExternalWbkException(msg);
-                                ex.ImportResult = ImportResult.WrongFormat;
+                                ex.ImportResult = ImportResultOrig.WrongFormat;
                                 throw ex;
                             }
-                            
+
                             // Set extended properties of column, then add column...
-                            col.ExtendedProperties["Session Nmbr"] = s.SessionNo;
-                            col.ExtendedProperties["QuizDate"] = s.QuizDate.ToShortDateString();
-                            col.ExtendedProperties["MaxQuizPts"] = s.MaxPts.ToString().PadLeft(2, '0');
+                            col.ExtendedProperties["Session Nmbr"] = sessionNo;
+                            col.ExtendedProperties["QuizDate"] = sessionDt;
+                            col.ExtendedProperties["MaxQuizPts"] = maxPts;
                             col.ExtendedProperties["ComboBoxLbl"] =
-                                string.Format($"Session {s.SessionNo} - {s.QuizDate}");
+                                string.Format($"Session {sessionNo} - {sessionDt}");
                             _dtAllScores.Columns.Add(col);
                         }
                         catch
@@ -404,3 +445,4 @@ namespace iClickerQuizPts
         #endregion
     }
 }
+

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.ComponentModel;
 using System.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using iClickerQuizPts.AppExceptions;
@@ -89,6 +90,35 @@ namespace iClickerQuizPts
         }
 
         /// <summary>
+        /// Retreives the quiz data column headers in this workbook.
+        /// </summary>
+        /// <returns>All the quiz sessions already downloaded into this workbook.</returns>
+        public BindingList<Session> RetrieveSessions()
+        {
+            int rowSessNo = Globals.Sheet1.Range["rowSessionNmbr"].Row;
+            int rowDt = Globals.Sheet1.Range["xx"].Row;
+            int rowMsxPts = Globals.Sheet1.Range["rowTtlQuizPts"].Row;
+
+            BindingList<Session> bl = new BindingList<Session>();
+
+            foreach (Excel.Range c in _loQzGrades.HeaderRowRange)
+            {
+                if($"{c}".Contains("Session"))
+                {
+                    int colNo = c.Column;
+                    string sessNo = $"Globals.Sheet1.Cells[rowSessNo,colNo]";
+                    Excel.Range cellDt = Globals.Sheet1.Cells[rowDt, colNo];
+                    DateTime dt = DateTime.Parse(cellDt.Value);
+                    Excel.Range cellPts = Globals.Sheet1.Cells[rowMsxPts, colNo];
+                    Byte maxPts = byte.Parse(cellPts.Value);
+                    Session s = new Session(sessNo, dt, maxPts);
+                    bl.Add(s);
+                }
+            }
+            return bl;
+        }
+
+        /// <summary>
         /// Creates and populates a <see cref="System.Data.DataTable"/> 
         /// which contains all of the Session information for quiz scores
         /// already imported into this workbook.
@@ -139,6 +169,17 @@ namespace iClickerQuizPts
                 r["StudentEml"] = (string)c.Value;
                 _dtEmls.Rows.Add(r);
             }
+        }
+
+        /// <summary>
+        /// Extracts the quiz date from a column header in the QuizPts worksheet.
+        /// </summary>
+        /// <param name="colHdr">A column header from the QuizPts worksheet.</param>
+        /// <returns>The date of the quiz for the scores contained in the column.</returns>
+        public DateTime GetDatePortionFromColHeader(string colHdr)
+        {
+            int posHypen = colHdr.IndexOf("-");
+            return DateTime.Parse(colHdr.Substring(posHypen + 1).Trim());
         }
         #endregion
     }

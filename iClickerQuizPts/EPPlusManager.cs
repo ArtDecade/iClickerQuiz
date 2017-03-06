@@ -220,12 +220,9 @@ namespace iClickerQuizPts
         /// </list>
         /// </exception>
         /// </summary>
-        public virtual void CreateDataTables()
+        public virtual void CreateRawQuizDataTable()
         {
             _dtAllScores = new DataTable("RawQuizData");
-            string sessionNo;
-            string sessionDt;
-            string maxPts;
 
             using (ExcelPackage p = new ExcelPackage())
             {

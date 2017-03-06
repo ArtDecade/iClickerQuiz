@@ -68,7 +68,7 @@ namespace iClickerQuizPts
                 get
                 {
                     string fmtdDate = _date.ToString("d", DateTimeFormatInfo.InvariantInfo);
-                    return String.Format($"Session {_maxPts.ToString()} - {fmtdDate}");
+                    return String.Format($"Session {_nmbr} - {fmtdDate}");
                 }
             }
 
@@ -78,7 +78,10 @@ namespace iClickerQuizPts
             public string ColHeaderText
             {
                 get
-                { return string.Format($"Session {_nmbr}"); }
+                {
+                    string fmtdDate = _date.ToString("d", DateTimeFormatInfo.InvariantInfo);
+                    return string.Format($"Sess {_nmbr} - {fmtdDate}");
+                }
             }
             #endregion
             #region readWrite

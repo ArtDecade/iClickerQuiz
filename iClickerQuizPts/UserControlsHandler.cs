@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Data;
 using Excel = Microsoft.Office.Interop.Excel;
 using Office = Microsoft.Office.Core;
+using System.ComponentModel;
 
 namespace iClickerQuizPts
 {
@@ -16,12 +17,13 @@ namespace iClickerQuizPts
     public static class UserControlsHandler
     {
         #region fields
-        private static string _wbkFullNm;
         private static byte _crsWk;
         private static WkSession _session = WkSession.None;
         private static DataTable _dtSortedSsnsAll;
-        private static DataTable _dtSortedSsnsNew;
-        private static EPPlusManagerOrig _eppMgr;
+        private static EPPlusManager _eppMgr;
+        private static ThisWbkDataWrapper _thisWbkWrppr = new ThisWbkDataWrapper();
+        private static BindingList<Session> _blAllSessns = new BindingList<Session>();
+        private static BindingList<Session> _blNewSessns = new BindingList<Session>();
         #endregion
 
         #region Ppts
@@ -100,30 +102,24 @@ namespace iClickerQuizPts
             if (!userSelectedFile)
                 return;
             // If here user selected a file...
-            _eppMgr = new EPPlusManagerOrig(rawDataFileFullNm);
-            _eppMgr.CreateDataTables();
+            _eppMgr = new EPPlusManager(rawDataFileFullNm);
+            _eppMgr.CreateRawQuizDataTable();
 
-            // Populate sorted data table of all Sessions...
-            DataView dvSessNos = _eppMgr.SessionNmbrsDataTable.DefaultView;
-            dvSessNos.Sort = "SessionNo ASC";
-            _dtSortedSsnsAll = dvSessNos.ToTable();
+            // Set BindingList of all Sessions...
+            _blAllSessns = _eppMgr.BListSessionsAll;
 
-            // Populate sorted data table of new Sessions...
-            ThisWbkDataWrapper wrpr = new ThisWbkDataWrapper();
-            var newSessns = (from alls in _dtSortedSsnsAll.AsEnumerable()
-                             select alls).
-                             Except(
-                            from tws in wrpr.SessionNmbrs.AsEnumerable()
-                                                 select tws);
+            // Get BindingList of existing Sessions...
+            BindingList<Session> blExisting = _thisWbkWrppr.RetrieveSessions();
 
-                        
-            //.Except(wrpr.SessionNmbrs);
-            
-
-
-           
-
-
+            // Create BindingList of new Sessions..
+            var newSessns = (from Session sAll
+                             in _eppMgr.BListSessionsAll
+                             orderby sAll.SessionNo
+                             select sAll).Except(from Session sExisting
+                                                 in blExisting
+                                                 select sExisting);
+            foreach (Session s in newSessns)
+                _blNewSessns.Add(s);
         }
 
         /// <summary>
@@ -159,6 +155,8 @@ namespace iClickerQuizPts
             }
             return userSelectedWbk;
         }
+
+
 
         
 

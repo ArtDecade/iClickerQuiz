@@ -15,6 +15,7 @@ namespace iClickerQuizPts
     /// </summary>
     public partial class QuizUserControl : UserControl
     {
+
         /// <summary>
         /// Instantiates an instance of the workbook&apos;s action panel.
         /// </summary>
@@ -24,9 +25,31 @@ namespace iClickerQuizPts
             this.Load += QuizUserControl_Load;
         }
 
-        private void dateTimePickerQuizDate_ValueChanged(object sender, EventArgs e)
+        private void QuizUserControl_Load(object sender, EventArgs e)
         {
-            //QuizDate = dateTimePickerQuizDate.selected
+            if (Globals.ThisWorkbook.QuizDates.Count > 1)
+                this.lblLatestQuizDate.Text =
+                    Globals.ThisWorkbook.QuizDates.Max().ToShortDateString();
+        }
+
+        private void btnOpenQuizWbk_Click(object sender, EventArgs e)
+        {
+
+            // Automatically select new Sessions...
+            radNewDatesOnly.Checked = true;
+        }
+
+        private void radioButton_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.radNewDatesOnly.Checked == true)
+                this.comboSession.DataSource = UserControlsHandler.BindingListNewSessions; 
+            else // ...all dates
+                this.comboSession.DataSource = UserControlsHandler.BindingListAllSessions; 
+        }
+
+        private void comboQuizDates_SelectedIndexChanged(object sender, EventArgs e)
+        {
+
         }
 
         private void comboCourseWeek_SelectedIndexChanged(object sender, EventArgs e)
@@ -39,38 +62,11 @@ namespace iClickerQuizPts
             UserControlsHandler.SetSessionEnum(comboSession.SelectedItem.ToString());
         }
 
-        private void btnOK_Click(object sender, EventArgs e)
-        {
-            UserControlsHandler.ImportDataMaestro();
-        }
-
-        #region UnusedEventHandlers
-        private void lblCalendar_Click(object sender, EventArgs e)
+        private void btnImportQuizData_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void lblCourseWk_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-        #endregion
-
-        private void QuizUserControl_Load(object sender, EventArgs e)
-        {
-            if(Globals.ThisWorkbook.QuizDates.Count > 1)
-            this.lblLatestQuizDate.Text =
-                Globals.ThisWorkbook.QuizDates.Max().ToShortDateString();
-        }
-
-        private void lblLatestQuizDate_Click(object sender, EventArgs e)
-        {
-
-        }
+       
     }
 }

@@ -23,6 +23,7 @@ namespace iClickerQuizPts
         Excel.ListObject _loQzGrades;
         DataTable _dtSessNos;
         DataTable _dtEmls;
+        string _mostRecentQuizDt;
         #endregion
 
         #region ppts
@@ -45,6 +46,16 @@ namespace iClickerQuizPts
         {
             get
             { return _dtEmls; }
+        }
+
+        /// <summary>
+        /// Gets the most recent quiz date within the already-imported 
+        /// quiz data.
+        /// </summary>
+        public string MostRecentQuizDate
+        {
+            get
+            { return _mostRecentQuizDt; }
         }
 
         #endregion

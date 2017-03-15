@@ -53,9 +53,30 @@ namespace iClickerQuizPts
         /// scores occurred.
         /// </summary>
         public static DateTime QuizDate { get; set; } = DateTime.Parse("1/1/2016");
+
+        /// <summary>
+        /// Gets a <see cref="System.ComponentModel.BindingList{Session}"/> of 
+        /// all sessions in the raw quiz file.
+        /// </summary>
+        public static BindingList<Session> BindingListAllSessions
+        {
+            get
+            { return _blAllSessns; }
+        }
+
+        /// <summary>
+        /// Gets a <see cref="System.ComponentModel.BindingList{Session}"/> of 
+        /// data in the raw quiz file that have not yet been imported into 
+        /// iCLICKERQuizPoints worksheet.
+        /// </summary>
+        public static BindingList<Session> BindingListNewSessions
+        {
+            get
+            { return _blNewSessns; }
+        }
         #endregion
 
-        #region Methods
+        #region 
         /// <summary>
         /// Sets the <see cref="iClickerQuizPts.UserControlsHandler.CourseWeek"/> property.
         /// </summary>
@@ -111,7 +132,7 @@ namespace iClickerQuizPts
             // Get BindingList of existing Sessions...
             BindingList<Session> blExisting = _thisWbkWrppr.RetrieveSessions();
 
-            // Create BindingList of new Sessions..
+            // Create BindingList of new Sessions...
             var newSessns = (from Session sAll
                              in _eppMgr.BListSessionsAll
                              orderby sAll.SessionNo
@@ -155,6 +176,8 @@ namespace iClickerQuizPts
             }
             return userSelectedWbk;
         }
+
+
 
 
 

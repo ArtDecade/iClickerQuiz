@@ -69,13 +69,13 @@
     <Compile Include="ThisWorkbookWrapperTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\iClickerQuizPts\iClickerQuizPts.csproj">
       <Project>{73705c6f-7093-468a-a4d3-4fefbee134f8}</Project>
       <Name>iClickerQuizPts</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

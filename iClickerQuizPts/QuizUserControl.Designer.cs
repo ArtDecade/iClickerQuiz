@@ -28,44 +28,84 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lblCalendar = new System.Windows.Forms.Label();
-            this.lblCourseWk = new System.Windows.Forms.Label();
+            System.Windows.Forms.Label lblImportDatesCombo;
+            System.Windows.Forms.Label lblCourseWkCombo;
+            System.Windows.Forms.Label lblLectureSessionCombo;
+            System.Windows.Forms.Label lblDate;
+            System.Windows.Forms.Label lblSessions;
             this.comboCourseWeek = new System.Windows.Forms.ComboBox();
-            this.lblLectureSession = new System.Windows.Forms.Label();
             this.comboSession = new System.Windows.Forms.ComboBox();
             this.openFileDialogQuizResults = new System.Windows.Forms.OpenFileDialog();
             this.btnOpenQuizWbk = new System.Windows.Forms.Button();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
-            this.lblLatestQuizLbl = new System.Windows.Forms.Label();
+            this.comboQuizDates = new System.Windows.Forms.ComboBox();
             this.lblLatestQuizDate = new System.Windows.Forms.Label();
             this.btnImportQuizData = new System.Windows.Forms.Button();
             this.gboxDatesToShow = new System.Windows.Forms.GroupBox();
             this.radAllDates = new System.Windows.Forms.RadioButton();
             this.radNewDatesOnly = new System.Windows.Forms.RadioButton();
+            this.gboxLatestQuizzes = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            lblImportDatesCombo = new System.Windows.Forms.Label();
+            lblCourseWkCombo = new System.Windows.Forms.Label();
+            lblLectureSessionCombo = new System.Windows.Forms.Label();
+            lblDate = new System.Windows.Forms.Label();
+            lblSessions = new System.Windows.Forms.Label();
             this.gboxDatesToShow.SuspendLayout();
+            this.gboxLatestQuizzes.SuspendLayout();
             this.SuspendLayout();
             // 
-            // lblCalendar
+            // lblImportDatesCombo
             // 
-            this.lblCalendar.AutoSize = true;
-            this.lblCalendar.Enabled = false;
-            this.lblCalendar.Location = new System.Drawing.Point(13, 203);
-            this.lblCalendar.Name = "lblCalendar";
-            this.lblCalendar.Size = new System.Drawing.Size(98, 13);
-            this.lblCalendar.TabIndex = 1;
-            this.lblCalendar.Text = "Quiz Date to Import";
-            this.lblCalendar.Click += new System.EventHandler(this.lblCalendar_Click);
+            lblImportDatesCombo.AutoSize = true;
+            lblImportDatesCombo.CausesValidation = false;
+            lblImportDatesCombo.Enabled = false;
+            lblImportDatesCombo.Location = new System.Drawing.Point(25, 214);
+            lblImportDatesCombo.Name = "lblImportDatesCombo";
+            lblImportDatesCombo.Size = new System.Drawing.Size(98, 13);
+            lblImportDatesCombo.TabIndex = 1;
+            lblImportDatesCombo.Text = "Quiz Date to Import";
             // 
-            // lblCourseWk
+            // lblCourseWkCombo
             // 
-            this.lblCourseWk.AutoSize = true;
-            this.lblCourseWk.Enabled = false;
-            this.lblCourseWk.Location = new System.Drawing.Point(13, 276);
-            this.lblCourseWk.Name = "lblCourseWk";
-            this.lblCourseWk.Size = new System.Drawing.Size(69, 13);
-            this.lblCourseWk.TabIndex = 2;
-            this.lblCourseWk.Text = "CourseWeek";
-            this.lblCourseWk.Click += new System.EventHandler(this.lblCourseWk_Click);
+            lblCourseWkCombo.AutoSize = true;
+            lblCourseWkCombo.CausesValidation = false;
+            lblCourseWkCombo.Enabled = false;
+            lblCourseWkCombo.Location = new System.Drawing.Point(22, 304);
+            lblCourseWkCombo.Name = "lblCourseWkCombo";
+            lblCourseWkCombo.Size = new System.Drawing.Size(69, 13);
+            lblCourseWkCombo.TabIndex = 2;
+            lblCourseWkCombo.Text = "CourseWeek";
+            // 
+            // lblLectureSessionCombo
+            // 
+            lblLectureSessionCombo.AutoSize = true;
+            lblLectureSessionCombo.CausesValidation = false;
+            lblLectureSessionCombo.Enabled = false;
+            lblLectureSessionCombo.Location = new System.Drawing.Point(22, 391);
+            lblLectureSessionCombo.Name = "lblLectureSessionCombo";
+            lblLectureSessionCombo.Size = new System.Drawing.Size(83, 13);
+            lblLectureSessionCombo.TabIndex = 4;
+            lblLectureSessionCombo.Text = "Lecture Session";
+            // 
+            // lblDate
+            // 
+            lblDate.Enabled = false;
+            lblDate.Location = new System.Drawing.Point(10, 20);
+            lblDate.Name = "lblDate";
+            lblDate.Size = new System.Drawing.Size(60, 13);
+            lblDate.TabIndex = 12;
+            lblDate.Text = "Date:";
+            lblDate.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // lblSessions
+            // 
+            lblSessions.Enabled = false;
+            lblSessions.Location = new System.Drawing.Point(10, 40);
+            lblSessions.Name = "lblSessions";
+            lblSessions.Size = new System.Drawing.Size(60, 13);
+            lblSessions.TabIndex = 13;
+            lblSessions.Text = "Session(s):";
+            lblSessions.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // comboCourseWeek
             // 
@@ -83,22 +123,11 @@
             "10",
             "11",
             "12"});
-            this.comboCourseWeek.Location = new System.Drawing.Point(16, 292);
+            this.comboCourseWeek.Location = new System.Drawing.Point(25, 320);
             this.comboCourseWeek.Name = "comboCourseWeek";
             this.comboCourseWeek.Size = new System.Drawing.Size(121, 21);
             this.comboCourseWeek.TabIndex = 3;
             this.comboCourseWeek.SelectedIndexChanged += new System.EventHandler(this.comboCourseWeek_SelectedIndexChanged);
-            // 
-            // lblLectureSession
-            // 
-            this.lblLectureSession.AutoSize = true;
-            this.lblLectureSession.Enabled = false;
-            this.lblLectureSession.Location = new System.Drawing.Point(13, 352);
-            this.lblLectureSession.Name = "lblLectureSession";
-            this.lblLectureSession.Size = new System.Drawing.Size(83, 13);
-            this.lblLectureSession.TabIndex = 4;
-            this.lblLectureSession.Text = "Lecture Session";
-            this.lblLectureSession.Click += new System.EventHandler(this.label1_Click);
             // 
             // comboSession
             // 
@@ -107,7 +136,7 @@
             "1st",
             "2nd",
             "3rd"});
-            this.comboSession.Location = new System.Drawing.Point(16, 368);
+            this.comboSession.Location = new System.Drawing.Point(22, 407);
             this.comboSession.Name = "comboSession";
             this.comboSession.Size = new System.Drawing.Size(121, 21);
             this.comboSession.TabIndex = 5;
@@ -121,58 +150,49 @@
             // 
             // btnOpenQuizWbk
             // 
-            this.btnOpenQuizWbk.Location = new System.Drawing.Point(13, 13);
+            this.btnOpenQuizWbk.Location = new System.Drawing.Point(55, 95);
             this.btnOpenQuizWbk.Name = "btnOpenQuizWbk";
             this.btnOpenQuizWbk.Size = new System.Drawing.Size(139, 23);
             this.btnOpenQuizWbk.TabIndex = 6;
             this.btnOpenQuizWbk.Text = "Open Quiz File";
             this.btnOpenQuizWbk.UseVisualStyleBackColor = true;
-            this.btnOpenQuizWbk.Click += new System.EventHandler(this.btnOK_Click);
+            this.btnOpenQuizWbk.Click += new System.EventHandler(this.btnOpenQuizWbk_Click);
             // 
-            // comboBox1
+            // comboQuizDates
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(13, 220);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(200, 21);
-            this.comboBox1.TabIndex = 7;
-            // 
-            // lblLatestQuizLbl
-            // 
-            this.lblLatestQuizLbl.Enabled = false;
-            this.lblLatestQuizLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLatestQuizLbl.ForeColor = System.Drawing.SystemColors.ActiveCaption;
-            this.lblLatestQuizLbl.Location = new System.Drawing.Point(13, 52);
-            this.lblLatestQuizLbl.Name = "lblLatestQuizLbl";
-            this.lblLatestQuizLbl.Size = new System.Drawing.Size(178, 34);
-            this.lblLatestQuizLbl.TabIndex = 8;
-            this.lblLatestQuizLbl.Text = "Date of most recent quiz in Master file:";
+            this.comboQuizDates.FormattingEnabled = true;
+            this.comboQuizDates.Location = new System.Drawing.Point(25, 230);
+            this.comboQuizDates.Name = "comboQuizDates";
+            this.comboQuizDates.Size = new System.Drawing.Size(200, 21);
+            this.comboQuizDates.TabIndex = 7;
+            this.comboQuizDates.SelectedIndexChanged += new System.EventHandler(this.comboQuizDates_SelectedIndexChanged);
             // 
             // lblLatestQuizDate
             // 
             this.lblLatestQuizDate.AutoSize = true;
+            this.lblLatestQuizDate.Enabled = false;
             this.lblLatestQuizDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLatestQuizDate.Location = new System.Drawing.Point(13, 86);
+            this.lblLatestQuizDate.Location = new System.Drawing.Point(85, 20);
             this.lblLatestQuizDate.Name = "lblLatestQuizDate";
-            this.lblLatestQuizDate.Size = new System.Drawing.Size(41, 13);
+            this.lblLatestQuizDate.Size = new System.Drawing.Size(65, 13);
             this.lblLatestQuizDate.TabIndex = 9;
-            this.lblLatestQuizDate.Text = "label2";
-            this.lblLatestQuizDate.Click += new System.EventHandler(this.lblLatestQuizDate_Click);
+            this.lblLatestQuizDate.Text = "some date";
             // 
             // btnImportQuizData
             // 
-            this.btnImportQuizData.Location = new System.Drawing.Point(16, 430);
+            this.btnImportQuizData.Location = new System.Drawing.Point(55, 480);
             this.btnImportQuizData.Name = "btnImportQuizData";
-            this.btnImportQuizData.Size = new System.Drawing.Size(139, 23);
+            this.btnImportQuizData.Size = new System.Drawing.Size(140, 23);
             this.btnImportQuizData.TabIndex = 10;
             this.btnImportQuizData.Text = "Import Quiz Data";
             this.btnImportQuizData.UseVisualStyleBackColor = true;
+            this.btnImportQuizData.Click += new System.EventHandler(this.btnImportQuizData_Click);
             // 
             // gboxDatesToShow
             // 
             this.gboxDatesToShow.Controls.Add(this.radAllDates);
             this.gboxDatesToShow.Controls.Add(this.radNewDatesOnly);
-            this.gboxDatesToShow.Location = new System.Drawing.Point(13, 113);
+            this.gboxDatesToShow.Location = new System.Drawing.Point(25, 130);
             this.gboxDatesToShow.Name = "gboxDatesToShow";
             this.gboxDatesToShow.Size = new System.Drawing.Size(200, 72);
             this.gboxDatesToShow.TabIndex = 11;
@@ -189,6 +209,7 @@
             this.radAllDates.TabStop = true;
             this.radAllDates.Text = "All quiz dates";
             this.radAllDates.UseVisualStyleBackColor = true;
+            this.radAllDates.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
             // 
             // radNewDatesOnly
             // 
@@ -200,50 +221,75 @@
             this.radNewDatesOnly.TabStop = true;
             this.radNewDatesOnly.Text = "New quiz dates only";
             this.radNewDatesOnly.UseVisualStyleBackColor = true;
+            this.radNewDatesOnly.CheckedChanged += new System.EventHandler(this.radioButton_CheckedChanged);
+            // 
+            // gboxLatestQuizzes
+            // 
+            this.gboxLatestQuizzes.BackColor = System.Drawing.SystemColors.Info;
+            this.gboxLatestQuizzes.Controls.Add(this.label1);
+            this.gboxLatestQuizzes.Controls.Add(lblDate);
+            this.gboxLatestQuizzes.Controls.Add(lblSessions);
+            this.gboxLatestQuizzes.Controls.Add(this.lblLatestQuizDate);
+            this.gboxLatestQuizzes.Location = new System.Drawing.Point(25, 10);
+            this.gboxLatestQuizzes.Name = "gboxLatestQuizzes";
+            this.gboxLatestQuizzes.Size = new System.Drawing.Size(200, 65);
+            this.gboxLatestQuizzes.TabIndex = 14;
+            this.gboxLatestQuizzes.TabStop = false;
+            this.gboxLatestQuizzes.Text = "Most Recent Imported Quiz(zes)";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Enabled = false;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(85, 40);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(56, 13);
+            this.label1.TabIndex = 14;
+            this.label1.Text = "Numbers";
             // 
             // QuizUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
+            this.Controls.Add(this.gboxLatestQuizzes);
             this.Controls.Add(this.gboxDatesToShow);
             this.Controls.Add(this.btnImportQuizData);
-            this.Controls.Add(this.lblCalendar);
-            this.Controls.Add(this.lblLatestQuizDate);
-            this.Controls.Add(this.comboBox1);
-            this.Controls.Add(this.lblLatestQuizLbl);
+            this.Controls.Add(lblImportDatesCombo);
+            this.Controls.Add(this.comboQuizDates);
             this.Controls.Add(this.btnOpenQuizWbk);
             this.Controls.Add(this.comboSession);
-            this.Controls.Add(this.lblLectureSession);
+            this.Controls.Add(lblLectureSessionCombo);
             this.Controls.Add(this.comboCourseWeek);
-            this.Controls.Add(this.lblCourseWk);
+            this.Controls.Add(lblCourseWkCombo);
             this.Location = new System.Drawing.Point(10, 0);
             this.Margin = new System.Windows.Forms.Padding(10);
             this.Name = "QuizUserControl";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Size = new System.Drawing.Size(226, 480);
+            this.Size = new System.Drawing.Size(250, 520);
             this.Load += new System.EventHandler(this.QuizUserControl_Load);
             this.gboxDatesToShow.ResumeLayout(false);
             this.gboxDatesToShow.PerformLayout();
+            this.gboxLatestQuizzes.ResumeLayout(false);
+            this.gboxLatestQuizzes.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-        private System.Windows.Forms.Label lblCalendar;
-        private System.Windows.Forms.Label lblCourseWk;
         private System.Windows.Forms.ComboBox comboCourseWeek;
-        private System.Windows.Forms.Label lblLectureSession;
         private System.Windows.Forms.ComboBox comboSession;
         private System.Windows.Forms.OpenFileDialog openFileDialogQuizResults;
         private System.Windows.Forms.Button btnOpenQuizWbk;
-        private System.Windows.Forms.ComboBox comboBox1;
-        private System.Windows.Forms.Label lblLatestQuizLbl;
-        private System.Windows.Forms.Label lblLatestQuizDate;
+        private System.Windows.Forms.ComboBox comboQuizDates;
         private System.Windows.Forms.Button btnImportQuizData;
         private System.Windows.Forms.GroupBox gboxDatesToShow;
         private System.Windows.Forms.RadioButton radAllDates;
         private System.Windows.Forms.RadioButton radNewDatesOnly;
+        internal System.Windows.Forms.Label lblLatestQuizDate;
+        private System.Windows.Forms.GroupBox gboxLatestQuizzes;
+        internal System.Windows.Forms.Label label1;
     }
 }

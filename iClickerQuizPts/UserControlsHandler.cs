@@ -21,7 +21,7 @@ namespace iClickerQuizPts
         private static WkSession _session = WkSession.None;
         private static DataTable _dtSortedSsnsAll;
         private static EPPlusManager _eppMgr;
-        private static ThisWbkDataWrapper _thisWbkWrppr = new ThisWbkDataWrapper();
+        private static ThisWbkDataWrapper _thisWbkDataWrppr = new ThisWbkDataWrapper();
         private static BindingList<Session> _blAllSessns = new BindingList<Session>();
         private static BindingList<Session> _blNewSessns = new BindingList<Session>();
         #endregion
@@ -130,7 +130,7 @@ namespace iClickerQuizPts
             _blAllSessns = _eppMgr.BListSessionsAll;
 
             // Get BindingList of existing Sessions...
-            BindingList<Session> blExisting = _thisWbkWrppr.RetrieveSessions();
+            BindingList<Session> blExisting = _thisWbkDataWrppr.RetrieveSessions();
 
             // Create BindingList of new Sessions...
             var newSessns = (from Session sAll
@@ -176,18 +176,6 @@ namespace iClickerQuizPts
             }
             return userSelectedWbk;
         }
-
-
-
-
-
-        
-
-
-
-
-
-
         #endregion
     }
 }

@@ -27,9 +27,7 @@ namespace iClickerQuizPts
 
         private void QuizUserControl_Load(object sender, EventArgs e)
         {
-            if (Globals.ThisWorkbook.QuizDates.Count > 1)
-                this.lblLatestQuizDate.Text =
-                    Globals.ThisWorkbook.QuizDates.Max().ToShortDateString();
+            
         }
 
         private void btnOpenQuizWbk_Click(object sender, EventArgs e)
@@ -65,6 +63,32 @@ namespace iClickerQuizPts
         private void btnImportQuizData_Click(object sender, EventArgs e)
         {
 
+        }
+
+        /// <summary>
+        /// Updates the label at the top of the 
+        /// <see cref="iClickerQuizPts.QuizUserControl"/> to display the date of 
+        /// the most recent quizz(es) in this workbook.
+        /// </summary>
+        /// <param name="quizDate">The date of the most recent quizz(es) that 
+        /// have been loaded into this workbook.</param>
+        public void SetLabelForMostRecentQuizDate(string quizDate)
+        {
+            this.lblLatestQuizDate.Text = quizDate;
+        }
+
+        /// <summary>
+        /// Updates the label at the top of the 
+        /// <see cref="iClickerQuizPts.QuizUserControl"/> to display the session 
+        /// number(s) for the most recent quizz(es) in this workbook.
+        /// </summary>
+        /// <param name="sessNos">The Session number for the most recent quiz 
+        /// that has been imported into this workbook.  If more than one quiz 
+        /// was administered on that data a comma-delimited list of those 
+        /// Session numbers.</param>
+        public void SetLabelForMostRecentSessionNos(string sessNos)
+        {
+            this.lblMostRecentSessNos.Text = sessNos;
         }
 
        

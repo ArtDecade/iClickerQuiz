@@ -44,7 +44,7 @@
             this.radAllDates = new System.Windows.Forms.RadioButton();
             this.radNewDatesOnly = new System.Windows.Forms.RadioButton();
             this.gboxLatestQuizzes = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblMostRecentSessNos = new System.Windows.Forms.Label();
             lblImportDatesCombo = new System.Windows.Forms.Label();
             lblCourseWkCombo = new System.Windows.Forms.Label();
             lblLectureSessionCombo = new System.Windows.Forms.Label();
@@ -170,6 +170,7 @@
             // lblLatestQuizDate
             // 
             this.lblLatestQuizDate.AutoSize = true;
+            this.lblLatestQuizDate.CausesValidation = false;
             this.lblLatestQuizDate.Enabled = false;
             this.lblLatestQuizDate.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblLatestQuizDate.Location = new System.Drawing.Point(85, 20);
@@ -226,7 +227,7 @@
             // gboxLatestQuizzes
             // 
             this.gboxLatestQuizzes.BackColor = System.Drawing.SystemColors.Info;
-            this.gboxLatestQuizzes.Controls.Add(this.label1);
+            this.gboxLatestQuizzes.Controls.Add(this.lblMostRecentSessNos);
             this.gboxLatestQuizzes.Controls.Add(lblDate);
             this.gboxLatestQuizzes.Controls.Add(lblSessions);
             this.gboxLatestQuizzes.Controls.Add(this.lblLatestQuizDate);
@@ -237,16 +238,17 @@
             this.gboxLatestQuizzes.TabStop = false;
             this.gboxLatestQuizzes.Text = "Most Recent Imported Quiz(zes)";
             // 
-            // label1
+            // lblMostRecentSessNos
             // 
-            this.label1.AutoSize = true;
-            this.label1.Enabled = false;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(85, 40);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 13);
-            this.label1.TabIndex = 14;
-            this.label1.Text = "Numbers";
+            this.lblMostRecentSessNos.AutoSize = true;
+            this.lblMostRecentSessNos.CausesValidation = false;
+            this.lblMostRecentSessNos.Enabled = false;
+            this.lblMostRecentSessNos.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMostRecentSessNos.Location = new System.Drawing.Point(85, 40);
+            this.lblMostRecentSessNos.Name = "lblMostRecentSessNos";
+            this.lblMostRecentSessNos.Size = new System.Drawing.Size(56, 13);
+            this.lblMostRecentSessNos.TabIndex = 14;
+            this.lblMostRecentSessNos.Text = "Numbers";
             // 
             // QuizUserControl
             // 
@@ -288,8 +290,8 @@
         private System.Windows.Forms.GroupBox gboxDatesToShow;
         private System.Windows.Forms.RadioButton radAllDates;
         private System.Windows.Forms.RadioButton radNewDatesOnly;
-        internal System.Windows.Forms.Label lblLatestQuizDate;
         private System.Windows.Forms.GroupBox gboxLatestQuizzes;
-        internal System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblLatestQuizDate;
+        private System.Windows.Forms.Label lblMostRecentSessNos;
     }
 }

@@ -13,13 +13,13 @@ using Excel = Microsoft.Office.Interop.Excel;
 namespace iClickerQuizPts.UnitTests
 {
     [TestFixture]
-    [Category("ThisWorkbookWrapperTests")]
-    class ThisWorkbookWrapperTests
+    [Category("ThisWbkWrapperTests")]
+    class ThisWbkWrapperTests
     {
         [TestCase("foo")]
         public void VerifyWbkScopedNames_InvalidNames_Throws(string nm)
         {
-            var wbw = Substitute.For<ThisWorkbookWrapper>();
+            var wbw = Substitute.For<ThisWbkWrapper>();
 
             
         }

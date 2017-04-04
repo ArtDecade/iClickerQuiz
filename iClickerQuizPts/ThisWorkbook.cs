@@ -66,7 +66,8 @@ namespace iClickerQuizPts
     /// Provides a mechanism for pairing the name of each Excel <see cref="Excel.ListObject"/> 
     /// (i.e., Table) with its parent <see cref="Excel.Worksheet"/>. </summary>
     /// <remarks>Each of the three worksheets in this workbook contains a named 
-    /// <see cref="Excel.ListObject"/>.  The <see cref="ThisWorkbook.InstantiateListObjWrapperClasses"/> method 
+    /// <see cref="Excel.ListObject"/>.  
+    /// The <see cref="ThisWbkWrapper.InstantiateListObjWrapperClasses"/> method 
     /// utilizes the information stored in instances of this struct in order to verify that 
     /// the basic structure of this <see cref="Excel.Workbook"/> has not been altered.</remarks>
     public struct WshListobjPair
@@ -123,7 +124,7 @@ namespace iClickerQuizPts
         private Excel.ListObject _tblQuizGrades = null;
         private List<WshListobjPair> _listObjsByWsh = new List<WshListobjPair>();
 
-        private ThisWorkbookWrapper _twbkWrapper;
+        private ThisWbkWrapper _twbkWrapper;
 
         private QuizDataLOWrapper _qdLOMgr;
         private DblDippersLOWrapper _ddsLOMgr;
@@ -162,7 +163,8 @@ namespace iClickerQuizPts
 
         private void ThisWorkbook_Open()
         {
-            _twbkWrapper = new ThisWorkbookWrapper();
+            #region VerifyStucturalIntegrityWbk
+            _twbkWrapper = new ThisWbkWrapper();
 
             try
             {
@@ -222,14 +224,19 @@ namespace iClickerQuizPts
                 MsgBoxGenerator.ShowMsg(MessageBoxButtons.OK);
                 return; // ...terminate program execution
             }
-
+            #endregion
             _twbkWrapper.SetVirginWbkProperty();
             if (_twbkWrapper.IsVirginWbk)
+            {
                 _twbkWrapper.PromptUserForCourseNameAndSemester();
-
-
-
-
+                _ctrl.SetLabelForMostRecentQuizDate("No data yet.");
+                _ctrl.SetLabelForMostRecentSessionNos(" -- ");
+            }
+            else
+            // TODO:  Set latest quiz date field in control panel...
+            {
+               
+            }
         }
 
         private void ThisWorkbook_Shutdown(object sender, System.EventArgs e)

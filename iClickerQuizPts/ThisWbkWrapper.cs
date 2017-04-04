@@ -15,7 +15,7 @@ namespace iClickerQuizPts
     /// Provides a mechanism for interacting with this workbook in a 
     /// unit-testable manner.
     /// </summary>
-    public class ThisWorkbookWrapper
+    public class ThisWbkWrapper
     {
         #region fields
         private bool _virginWbk;
@@ -51,7 +51,7 @@ namespace iClickerQuizPts
             WshListobjPair dblDpprsLOInfo =
                 new WshListobjPair("tblDblDippers", Globals.Sheet2.Name);
 
-            // Instantiate quiz qata class...
+            // Instantiate quiz data class...
             try
             {
                 _qdLOWrppr = new QuizDataLOWrapper(quizDataLOInfo);
@@ -155,7 +155,7 @@ namespace iClickerQuizPts
         }
 
         /// <summary>
-        /// Sets the <see cref="iClickerQuizPts.ThisWorkbookWrapper.IsVirginWbk"/> 
+        /// Sets the <see cref="iClickerQuizPts.ThisWbkWrapper.IsVirginWbk"/> 
         /// property.
         /// </summary>
         /// <remarks>
@@ -176,7 +176,7 @@ namespace iClickerQuizPts
         /// The user's input is stored in cells in the upper left-hand portion of 
         /// the <code>iCLICKERQuizPoints</code> worksheet.
         /// <para><b>NOTE:</b>&#8194;The user is only shown this form if and when 
-        /// the <see cref="iClickerQuizPts.ThisWorkbookWrapper.IsVirginWbk"/> 
+        /// the <see cref="iClickerQuizPts.ThisWbkWrapper.IsVirginWbk"/> 
         /// property is <see langword="true"/>.</para>
         /// </remarks>
         public virtual void PromptUserForCourseNameAndSemester()

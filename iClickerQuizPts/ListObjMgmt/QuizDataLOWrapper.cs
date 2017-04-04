@@ -25,7 +25,5 @@ namespace iClickerQuizPts.ListObjMgmt
         public QuizDataLOWrapper(WshListobjPair wshTblNmzPair) : base(wshTblNmzPair)
         {
         }
-
-
     }
 }
